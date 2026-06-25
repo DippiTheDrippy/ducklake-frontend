@@ -1,0 +1,14 @@
+services:
+  # Frontend service
+  frontend:
+    build:
+      dockerfile: Dockerfile
+    environment:
+      - OIDC_URL=http://localhost:8081
+      - OIDC_REALM=isflemingsberg
+      - OIDC_CLIENT_ID=frontend
+      - API_URL=http://localhost:6767
+      - REDIRECT_URI=http://localhost:3000
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
