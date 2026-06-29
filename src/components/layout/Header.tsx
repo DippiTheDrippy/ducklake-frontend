@@ -12,11 +12,13 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { alpha, useTheme as useMuiTheme } from "@mui/material/styles";
 import { useAuth } from "react-oidc-context";
 import { useTheme } from "../../hooks/useTheme";
+import { useUser } from "../../contexts/UserContext";
 
 export default function Header() {
   const muiTheme = useMuiTheme();
   const { isDark, toggleTheme } = useTheme();
   const auth = useAuth();
+  const user = useUser();
 
   const location = useLocation();
   const isActiveRoute = (path: string) => {
@@ -198,11 +200,8 @@ export default function Header() {
               },
             }}
           >
-            {auth.isLoading
-              ? "Loading..."
-              : auth.isAuthenticated
-                ? "Sign out"
-                : "Sign in"}
+            {auth.isLoading ? "Loading..." : `${user.backendUser?.firstName}`}{" "}
+            {`${user.backendUser?.lastName}`}
           </Button>
         </Box>
       </Toolbar>

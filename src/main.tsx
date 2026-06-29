@@ -6,6 +6,7 @@ import { ThemeProvider } from "./contexts/ThemeProvider.tsx";
 import { OidcProvider } from "./contexts/OidcContext.tsx";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { UserProvider } from "./contexts/UserContext.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -13,7 +14,9 @@ createRoot(document.getElementById("root")!).render(
       <BrowserRouter>
         <OidcProvider>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <App />
+            <UserProvider>
+              <App />
+            </UserProvider>
           </LocalizationProvider>
         </OidcProvider>
       </BrowserRouter>
