@@ -7,6 +7,7 @@ import { OidcProvider } from "./contexts/OidcContext.tsx";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { UserProvider } from "./contexts/UserContext.tsx";
+import { DatasetsProvider } from "./contexts/DatasetsContext.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -15,7 +16,9 @@ createRoot(document.getElementById("root")!).render(
         <OidcProvider>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <UserProvider>
-              <App />
+              <DatasetsProvider>
+                <App />
+              </DatasetsProvider>
             </UserProvider>
           </LocalizationProvider>
         </OidcProvider>

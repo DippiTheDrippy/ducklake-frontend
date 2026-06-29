@@ -2,19 +2,14 @@ import { api } from "./client";
 
 // DATASETS
 
-export async function createEmptyDataset(metadata: {
+export async function createEmptyDataset(body: {
   name: string;
   displayName: string;
   description: string;
   isPublic: boolean;
 }) {
   const { data, error } = await api.POST("/api/admin/datasets", {
-    body: {
-      name: metadata.name,
-      displayName: metadata.displayName,
-      description: metadata.description,
-      isPublic: metadata.isPublic,
-    },
+    body,
   });
 
   if (error) {
@@ -36,12 +31,7 @@ export async function createEmptyDatasetFromFile(
 ) {
   const { data, error } = await api.POST("/api/admin/datasets/file", {
     body: {
-      metadata: {
-        name: metadata.name,
-        displayName: metadata.displayName,
-        description: metadata.description,
-        isPublic: metadata.isPublic,
-      },
+      metadata,
       file: file as unknown as string,
     },
     bodySerializer() {
@@ -96,9 +86,9 @@ export async function appendDataFromFile(id: string, file: File) {
 export async function updateDataset(
   id: string,
   body: {
-    display_name: string;
+    displayName: string;
     description: string;
-    is_public: boolean;
+    isPublic: boolean;
   },
 ) {
   const { data, error } = await api.PUT("/api/admin/datasets/{id}", {

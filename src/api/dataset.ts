@@ -1,3 +1,5 @@
+import type { Dataset } from "../types/dataset";
+import type { Pagination } from "../types/pagination";
 import { api } from "./client";
 import type { Dayjs } from "dayjs";
 
@@ -20,7 +22,10 @@ export async function getDataset(id: string) {
   return data;
 }
 
-export async function listDatasets(pageIndex: number, pageSize: number) {
+export async function listDatasets(
+  pageIndex: number,
+  pageSize: number,
+): Promise<Pagination<Dataset>> {
   const { data, error } = await api.GET("/api/datasets", {
     params: {
       query: {
@@ -35,14 +40,14 @@ export async function listDatasets(pageIndex: number, pageSize: number) {
     throw error;
   }
 
-  return data;
+  return data as Pagination<Dataset>;
 }
 
 export async function searchDatasets(
   search: string,
   pageIndex: number,
   pageSize: number,
-) {
+): Promise<Pagination<Dataset>> {
   const { data, error } = await api.GET("/api/datasets/search", {
     params: {
       query: {
@@ -58,7 +63,7 @@ export async function searchDatasets(
     throw error;
   }
 
-  return data;
+  return data as Pagination<Dataset>;
 }
 
 // FAVORTIES

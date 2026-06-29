@@ -2,6 +2,8 @@ import type { RouteObject } from "react-router-dom";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import Layout from "./components/layout/Layout";
+import Browse from "./pages/Browse";
+import Dataset from "./pages/Dataset";
 
 export const routes: RouteObject[] = [
   {
@@ -10,7 +12,8 @@ export const routes: RouteObject[] = [
     children: [
       { index: true, element: <Home /> },
 
-      //   { path: "/event", element: <Event /> },
+      { path: "browse", element: <Browse /> },
+      { path: "datasets/:id", element: <Dataset /> },
 
       { path: "*", element: <NotFound /> },
     ],
