@@ -17,7 +17,7 @@ export default function Layout() {
         component="main"
         sx={{
           minHeight: "calc(100vh - 64px)",
-          width: { xs: "100%", md: "70%" },
+          width: { xs: "100%", md: "60%" },
           mx: "auto",
           px: { xs: 2, sm: 3, md: 0 },
           py: { xs: 2, md: 3 },
