@@ -16,6 +16,7 @@ import type { User } from "../types/user";
 interface UserContextType {
   backendUser: User | null;
   isAuthenticated: boolean;
+  isAdmin: boolean;
   isLoading: boolean;
   isRegistering: boolean;
   registrationError: unknown;
@@ -72,6 +73,22 @@ export function UserProvider({ children }: Readonly<{ children: ReactNode }>) {
 
   const accessToken = auth.user?.access_token;
   const userSubject = auth.user?.profile.sub;
+
+  const isAdmin = useMemo(() => {
+    const profile = auth.user?.profile as
+      | {
+          realm_access?: {
+            roles?: string[];
+          };
+          groups?: string[];
+        }
+      | undefined;
+
+    const roles = profile?.realm_access?.roles ?? [];
+    const groups = profile?.groups ?? [];
+
+    return roles.includes("admin") || groups.includes("admin");
+  }, [auth.user?.profile]);
 
   const registerBackendUser = useCallback(
     async (force = false): Promise<User | undefined> => {
@@ -139,6 +156,7 @@ export function UserProvider({ children }: Readonly<{ children: ReactNode }>) {
       isRegistering,
       registrationError,
       registerBackendUser,
+      isAdmin: isAdmin,
     }),
     [
       backendUser,
@@ -147,6 +165,7 @@ export function UserProvider({ children }: Readonly<{ children: ReactNode }>) {
       isRegistering,
       registrationError,
       registerBackendUser,
+      isAdmin,
     ],
   );
 

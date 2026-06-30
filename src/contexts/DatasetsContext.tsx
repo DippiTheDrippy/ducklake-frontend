@@ -23,7 +23,7 @@ interface DatasetsContextType {
     description: string,
     isPublic: boolean,
   ) => Promise<void>;
-  deleteDataset: (id: string) => Promise<void>;
+  deleteDataset: (id: string) => Promise<boolean>;
   isLoading: boolean;
   isFetchingMore: boolean;
   hasMore: boolean;
@@ -203,8 +203,8 @@ export const DatasetsProvider = ({
   );
 
   const delDataset = useCallback(
-    async (id: string) => {
-      if (loadingRef.current) return;
+    async (id: string): Promise<boolean> => {
+      if (loadingRef.current) return false;
 
       try {
         loadingRef.current = true;
@@ -212,8 +212,10 @@ export const DatasetsProvider = ({
         await deleteDataset(id);
         setDatasets((prev) => prev.filter((group) => group.id !== id));
         setTotalItems((prev) => Math.max(0, prev - 1));
+        return true;
       } catch (err) {
         console.error("deleteDataset: " + err);
+        return false;
       } finally {
         loadingRef.current = false;
         setLoading(false);

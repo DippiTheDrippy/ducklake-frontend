@@ -19,6 +19,7 @@ import {
 import { useDatasets } from "../contexts/DatasetsContext";
 import { DeleteForeverOutlined, UploadFileOutlined } from "@mui/icons-material";
 import ConfirmDialog from "../components/ConfirmDialog";
+import { useUser } from "../contexts/UserContext";
 
 function formatValue(value: string | number | null | undefined) {
   if (value === null || value === undefined || value === "") {
@@ -46,6 +47,7 @@ function formatColumnType(type: string) {
 export default function Dataset() {
   const { id } = useParams<{ id: string }>();
   const { dataset, getDataset, deleteDataset, isLoading } = useDatasets();
+  const { isAdmin } = useUser();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -144,36 +146,38 @@ export default function Dataset() {
               {info.description || "No description provided."}
             </Typography>
           </Box>
-          <Box
-            sx={{
-              display: "flex",
-              gap: 1,
-              maxHeight: "4vh",
-            }}
-          >
-            <Button
-              onClick={() => setDeleteDialogOpen(true)}
-              variant="contained"
-              size="small"
-              disabled={isLoading}
+          {isAdmin && (
+            <Box
               sx={{
-                backgroundColor: "error.main",
+                display: "flex",
+                gap: 1,
+                maxHeight: "4vh",
               }}
             >
-              <DeleteForeverOutlined />
-            </Button>
-            <Button
-              onClick={() => {}}
-              variant="contained"
-              size="small"
-              disabled={isLoading}
-              sx={{
-                backgroundColor: "success.main",
-              }}
-            >
-              <UploadFileOutlined />
-            </Button>
-          </Box>
+              <Button
+                onClick={() => setDeleteDialogOpen(true)}
+                variant="contained"
+                size="small"
+                disabled={isLoading}
+                sx={{
+                  backgroundColor: "error.main",
+                }}
+              >
+                <DeleteForeverOutlined />
+              </Button>
+              <Button
+                onClick={() => {}}
+                variant="contained"
+                size="small"
+                disabled={isLoading}
+                sx={{
+                  backgroundColor: "success.main",
+                }}
+              >
+                <UploadFileOutlined />
+              </Button>
+            </Box>
+          )}
         </Box>
 
         <Paper
@@ -394,7 +398,8 @@ export default function Dataset() {
         onConfirm={async () => {
           if (!id) return;
 
-          await deleteDataset(id);
+          const success = await deleteDataset(id);
+          if (!success) return;
           setDeleteDialogOpen(false);
           navigate("/browse");
         }}
