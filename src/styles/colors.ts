@@ -14,6 +14,10 @@ export const DARK_COLORS = {
   primaryContrast: "#071013",
   secondary: "#78D0CA",
 
+  error: "#F28B82",
+  warning: "#FDD663",
+  success: "#81C995",
+
   linkHover: "#8FDAD5",
 };
 
@@ -30,4 +34,8 @@ export const LIGHT_COLORS = {
 
   primaryContrast: "#071013",
   secondary: "#5EC8C1",
+
+  error: "#E25B52",
+  warning: "#D9902F",
+  success: "#3FA66B",
 };

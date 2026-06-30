@@ -1,24 +1,31 @@
 import { useEffect, useState } from "react";
 import {
   Box,
-  Card,
-  CardActionArea,
-  CardContent,
-  Chip,
+  Button,
   Container,
   InputAdornment,
   TextField,
   Typography,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { useNavigate } from "react-router-dom";
+
 import { useDatasets } from "../contexts/DatasetsContext";
-import type { Dataset } from "../types/dataset";
+import DatasetCard from "../components/datasets/DatasetCard";
+import DatasetCardSkeleton from "../components/datasets/DatasetCardSkeleton";
+
+const SKELETON_COUNT = 4;
 
 export default function Browse() {
-  const navigate = useNavigate();
-  const { datasets, isLoading, searchDatasets } = useDatasets();
-  const [search, setSearch] = useState("");
+  const {
+    hasMore,
+    isFetchingMore,
+    lastSearch,
+    datasets,
+    isLoading,
+    searchDatasets,
+    fetchMore,
+  } = useDatasets();
+  const [search, setSearch] = useState(lastSearch === null ? "" : lastSearch);
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {
@@ -27,6 +34,8 @@ export default function Browse() {
 
     return () => window.clearTimeout(timeout);
   }, [search, searchDatasets]);
+
+  const showEmptyState = !isLoading && datasets.length === 0;
 
   return (
     <Container
@@ -95,16 +104,7 @@ export default function Browse() {
           }}
         />
 
-        {isLoading ? (
-          <Typography
-            sx={{
-              fontSize: "0.85rem",
-              color: "text.secondary",
-            }}
-          >
-            Loading datasets...
-          </Typography>
-        ) : datasets.length === 0 ? (
+        {showEmptyState ? (
           <Typography
             sx={{
               fontSize: "0.85rem",
@@ -114,104 +114,52 @@ export default function Browse() {
             No datasets found.
           </Typography>
         ) : (
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: {
-                xs: "1fr",
-                sm: "repeat(2, minmax(0, 1fr))",
-                lg: "repeat(3, minmax(0, 1fr))",
-              },
-              gap: 2,
-            }}
-          >
-            {datasets.map((dataset: Dataset) => (
-              <Card
-                key={dataset.id}
-                variant="outlined"
+          <>
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: {
+                  xs: "1fr",
+                  sm: "repeat(2, minmax(0, 1fr))",
+                  lg: "repeat(3, minmax(0, 1fr))",
+                },
+                gap: 2,
+                alignItems: "stretch",
+              }}
+            >
+              {isLoading
+                ? Array.from({ length: SKELETON_COUNT }).map((_, index) => (
+                    <DatasetCardSkeleton key={index} />
+                  ))
+                : datasets.map((dataset) => (
+                    <DatasetCard key={dataset.id} dataset={dataset} />
+                  ))}
+            </Box>
+
+            {hasMore && !isLoading ? (
+              <Box
                 sx={{
-                  backgroundColor: "background.paper",
-                  borderColor: "divider",
-                  boxShadow: "none",
+                  display: "flex",
+                  justifyContent: "center",
+                  mt: 1,
                 }}
               >
-                <CardActionArea
-                  onClick={() => navigate(`/datasets/${dataset.id}`)}
+                <Button
+                  onClick={() => {
+                    fetchMore();
+                  }}
+                  disabled={isFetchingMore}
+                  variant="outlined"
+                  size="large"
                   sx={{
-                    height: "100%",
-                    alignItems: "stretch",
+                    minWidth: 120,
                   }}
                 >
-                  <CardContent
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: 1,
-                      p: 2,
-                      "&:last-child": {
-                        pb: 2,
-                      },
-                    }}
-                  >
-                    <Box>
-                      <Typography
-                        sx={{
-                          fontSize: "0.95rem",
-                          fontWeight: 500,
-                          color: "text.primary",
-                          lineHeight: 1.3,
-                        }}
-                      >
-                        {dataset.displayName || dataset.name}
-                      </Typography>
-
-                      <Typography
-                        sx={{
-                          fontSize: "0.75rem",
-                          color: "text.secondary",
-                          mt: 0.25,
-                        }}
-                      >
-                        {dataset.name}
-                      </Typography>
-                    </Box>
-
-                    {"description" in dataset && (
-                      <Typography
-                        sx={{
-                          fontSize: "0.82rem",
-                          color: "text.secondary",
-                          lineHeight: 1.6,
-                        }}
-                      >
-                        {dataset.description || "No description provided."}
-                      </Typography>
-                    )}
-
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "flex-start",
-                        mt: 0.5,
-                      }}
-                    >
-                      <Chip
-                        label={dataset.bucketName}
-                        size="small"
-                        variant="outlined"
-                        sx={{
-                          height: 22,
-                          fontSize: "0.7rem",
-                          color: "text.secondary",
-                          borderColor: "divider",
-                        }}
-                      />
-                    </Box>
-                  </CardContent>
-                </CardActionArea>
-              </Card>
-            ))}
-          </Box>
+                  {isFetchingMore ? "Loading..." : "Load more"}
+                </Button>
+              </Box>
+            ) : null}
+          </>
         )}
       </Box>
     </Container>

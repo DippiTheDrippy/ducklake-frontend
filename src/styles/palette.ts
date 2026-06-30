@@ -32,6 +32,18 @@ export const getPalette = (mode: PaletteMode): ThemeOptions["palette"] => {
       secondary: colors.textSecondary,
     },
 
+    error: {
+      main: colors.error,
+    },
+
+    warning: {
+      main: colors.warning,
+    },
+
+    success: {
+      main: colors.success,
+    },
+
     divider: isDark ? alpha("#FFFFFF", 0.09) : alpha("#000000", 0.09),
   };
 };

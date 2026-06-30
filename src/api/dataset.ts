@@ -1,11 +1,11 @@
-import type { Dataset } from "../types/dataset";
+import type { Dataset, DatasetWithSummary } from "../types/dataset";
 import type { Pagination } from "../types/pagination";
 import { api } from "./client";
 import type { Dayjs } from "dayjs";
 
 // DATASETS
 
-export async function getDataset(id: string) {
+export async function getDataset(id: string): Promise<DatasetWithSummary> {
   const { data, error } = await api.GET("/api/datasets/{id}", {
     params: {
       path: {
@@ -19,7 +19,7 @@ export async function getDataset(id: string) {
     throw error;
   }
 
-  return data;
+  return data as DatasetWithSummary;
 }
 
 export async function listDatasets(
