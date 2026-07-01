@@ -16,6 +16,7 @@ import type { User } from "../types/user";
 interface UserContextType {
   backendUser: User | null;
   isAuthenticated: boolean;
+  isAuthReady: boolean;
   isAdmin: boolean;
   isLoading: boolean;
   isRegistering: boolean;
@@ -74,6 +75,9 @@ export function UserProvider({ children }: Readonly<{ children: ReactNode }>) {
   const accessToken = auth.user?.access_token;
   const userSubject = auth.user?.profile.sub;
 
+  const [isAuthReady, setIsAuthReady] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
   const isAdmin = useMemo(() => {
     const profile = auth.user?.profile as
       | {
@@ -114,6 +118,8 @@ export function UserProvider({ children }: Readonly<{ children: ReactNode }>) {
         setApiAccessToken(accessToken);
 
         const registeredUser = await registerOnce(registerKey);
+        setIsAuthenticated(true);
+        setIsAuthReady(true);
 
         setBackendUser(registeredUser);
 
@@ -151,7 +157,8 @@ export function UserProvider({ children }: Readonly<{ children: ReactNode }>) {
   const value = useMemo<UserContextType>(
     () => ({
       backendUser,
-      isAuthenticated: auth.isAuthenticated,
+      isAuthenticated: isAuthenticated,
+      isAuthReady: isAuthReady,
       isLoading: auth.isLoading,
       isRegistering,
       registrationError,

@@ -9,7 +9,7 @@ import {
 import type { Dataset, DatasetWithSummary } from "../types/dataset";
 import { getDataset, listDatasets, searchDatasets } from "../api/dataset";
 import type { Pagination } from "../types/pagination";
-import { deleteDataset, updateDataset } from "../api/admin";
+import { appendDataFromFile, deleteDataset, updateDataset } from "../api/admin";
 
 interface DatasetsContextType {
   dataset: DatasetWithSummary | null;
@@ -23,6 +23,7 @@ interface DatasetsContextType {
     description: string,
     isPublic: boolean,
   ) => Promise<void>;
+  uploadDatasetFile: (id: string, file: File) => Promise<void>;
   deleteDataset: (id: string) => Promise<boolean>;
   isLoading: boolean;
   isFetchingMore: boolean;
@@ -70,6 +71,7 @@ export const DatasetsProvider = ({
   const fetchDataset = useCallback(
     async (id: string) => {
       if (loadingRef.current) return;
+      setDataset(null);
 
       try {
         loadingRef.current = true;
@@ -202,6 +204,24 @@ export const DatasetsProvider = ({
     [loading],
   );
 
+  const uploadDatasetFile = useCallback(
+    async (id: string, file: File) => {
+      if (loadingRef.current) return;
+
+      try {
+        loadingRef.current = true;
+        setLoading(true);
+        await appendDataFromFile(id, file);
+      } catch (err) {
+        console.error("uploadDatasetFile: " + err);
+      } finally {
+        loadingRef.current = false;
+        setLoading(false);
+      }
+    },
+    [loading],
+  );
+
   const delDataset = useCallback(
     async (id: string): Promise<boolean> => {
       if (loadingRef.current) return false;
@@ -210,7 +230,7 @@ export const DatasetsProvider = ({
         loadingRef.current = true;
         setLoading(true);
         await deleteDataset(id);
-        setDatasets((prev) => prev.filter((group) => group.id !== id));
+        setDatasets((prev) => prev.filter((dataset) => dataset.id !== id));
         setTotalItems((prev) => Math.max(0, prev - 1));
         return true;
       } catch (err) {
@@ -232,6 +252,7 @@ export const DatasetsProvider = ({
       searchDatasets: fetchDatasets,
       fetchMore,
       updateDataset: putDataset,
+      uploadDatasetFile: uploadDatasetFile,
       deleteDataset: delDataset,
       isLoading: loading,
       isFetchingMore,
@@ -245,6 +266,7 @@ export const DatasetsProvider = ({
       fetchDatasets,
       fetchMore,
       putDataset,
+      uploadDatasetFile,
       delDataset,
       loading,
       isFetchingMore,
