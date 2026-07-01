@@ -1,3 +1,4 @@
+import type { Dataset } from "../types/dataset";
 import { api } from "./client";
 
 // DATASETS
@@ -20,7 +21,7 @@ export async function createEmptyDataset(body: {
   return data;
 }
 
-export async function createEmptyDatasetFromFile(
+export async function createDatasetFromFile(
   metadata: {
     name: string;
     displayName: string;
@@ -28,7 +29,7 @@ export async function createEmptyDatasetFromFile(
     isPublic: boolean;
   },
   file: File,
-) {
+): Promise<Dataset> {
   const { data, error } = await api.POST("/api/admin/datasets/file", {
     body: {
       metadata,
@@ -55,7 +56,7 @@ export async function createEmptyDatasetFromFile(
     throw error;
   }
 
-  return data;
+  return data as Dataset;
 }
 
 export async function appendDataFromFile(id: string, file: File) {

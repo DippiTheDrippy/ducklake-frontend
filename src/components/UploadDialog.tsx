@@ -21,6 +21,7 @@ interface UploadDialogProps {
   onClose: () => void;
   onUpload: (file: File) => Promise<void>;
   onUploaded?: () => Promise<void> | void;
+  create?: boolean;
 }
 
 export default function UploadDialog({
@@ -32,7 +33,9 @@ export default function UploadDialog({
   onClose,
   onUpload,
   onUploaded,
-}: Readonly<UploadDialogProps>) {
+  create = false,
+  children,
+}: Readonly<UploadDialogProps & { children?: React.ReactNode }>) {
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -101,6 +104,8 @@ export default function UploadDialog({
             {description}
           </Typography>
 
+          {children}
+
           <Button
             component="label"
             variant="outlined"
@@ -148,7 +153,13 @@ export default function UploadDialog({
             color: "success.contrastText",
           }}
         >
-          {isUploading ? "Uploading..." : "Upload"}
+          {create
+            ? isUploading
+              ? "Creating..."
+              : "Create"
+            : isUploading
+              ? "Uploading..."
+              : "Upload"}
         </Button>
       </DialogActions>
     </Dialog>

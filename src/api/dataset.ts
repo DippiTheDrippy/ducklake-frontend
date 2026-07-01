@@ -1,4 +1,5 @@
 import type { Dataset, DatasetWithSummary } from "../types/dataset";
+import type { Credential } from "../types/credentials";
 import type { Pagination } from "../types/pagination";
 import { api } from "./client";
 import type { Dayjs } from "dayjs";
@@ -122,7 +123,10 @@ export async function unfavoriteDataset(id: string) {
 
 // CREDENTIALS
 
-export async function listCredentials(pageIndex: number, pageSize: number) {
+export async function listCredentials(
+  pageIndex: number,
+  pageSize: number,
+): Promise<Pagination<Credential>> {
   const { data, error } = await api.GET("/api/datasets/credentials", {
     params: {
       query: {
@@ -137,7 +141,7 @@ export async function listCredentials(pageIndex: number, pageSize: number) {
     throw error;
   }
 
-  return data;
+  return data as Pagination<Credential>;
 }
 
 export async function getDatasetCredential(datasetId: string) {
@@ -162,7 +166,7 @@ export async function createDatasetCredential(
   accessLevel: "READ" | "WRITE",
   expiresAt: Dayjs,
   neverExpires: boolean,
-) {
+): Promise<Credential> {
   const { data, error } = await api.POST("/api/datasets/{id}/credentials", {
     params: {
       path: {
@@ -181,10 +185,12 @@ export async function createDatasetCredential(
     throw error;
   }
 
-  return data;
+  return data as Credential;
 }
 
-export async function rotateDatasetCredential(credentialId: string) {
+export async function rotateDatasetCredential(
+  credentialId: string,
+): Promise<Credential> {
   const { data, error } = await api.POST(
     "/api/datasets/credentials/{id}/rotate",
     {
@@ -201,7 +207,7 @@ export async function rotateDatasetCredential(credentialId: string) {
     throw error;
   }
 
-  return data;
+  return data as Credential;
 }
 
 export async function deleteCredential(credentialId: string) {

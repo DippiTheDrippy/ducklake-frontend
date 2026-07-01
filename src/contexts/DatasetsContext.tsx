@@ -9,7 +9,12 @@ import {
 import type { Dataset, DatasetWithSummary } from "../types/dataset";
 import { getDataset, listDatasets, searchDatasets } from "../api/dataset";
 import type { Pagination } from "../types/pagination";
-import { appendDataFromFile, deleteDataset, updateDataset } from "../api/admin";
+import {
+  appendDataFromFile,
+  createDatasetFromFile,
+  deleteDataset,
+  updateDataset,
+} from "../api/admin";
 
 interface DatasetsContextType {
   dataset: DatasetWithSummary | null;
@@ -22,6 +27,15 @@ interface DatasetsContextType {
     displayName: string,
     description: string,
     isPublic: boolean,
+  ) => Promise<void>;
+  createDataset: (
+    metadata: {
+      name: string;
+      displayName: string;
+      description: string;
+      isPublic: boolean;
+    },
+    file: File,
   ) => Promise<void>;
   uploadDatasetFile: (id: string, file: File) => Promise<void>;
   deleteDataset: (id: string) => Promise<boolean>;
@@ -156,7 +170,7 @@ export const DatasetsProvider = ({
       setDatasets((prev) => appendUniqueDatasets(prev, resp.items));
       setTotalItems(resp.totalItems);
     } catch (err) {
-      console.error("fetchMore:", err);
+      console.error("fetchMoreDatasets:", err);
     } finally {
       loadingRef.current = false;
       setIsFetchingMore(false);
@@ -196,6 +210,33 @@ export const DatasetsProvider = ({
         );
       } catch (err) {
         console.error("updateDataset: " + err);
+      } finally {
+        loadingRef.current = false;
+        setLoading(false);
+      }
+    },
+    [loading],
+  );
+
+  const createDataset = useCallback(
+    async (
+      metadata: {
+        name: string;
+        displayName: string;
+        description: string;
+        isPublic: boolean;
+      },
+      file: File,
+    ) => {
+      if (loadingRef.current) return;
+
+      try {
+        loadingRef.current = true;
+        setLoading(true);
+        const dataset = await createDatasetFromFile(metadata, file);
+        setDatasets((prev) => [...prev, dataset]);
+      } catch (err) {
+        console.error("createDataset: " + err);
       } finally {
         loadingRef.current = false;
         setLoading(false);
@@ -252,6 +293,7 @@ export const DatasetsProvider = ({
       searchDatasets: fetchDatasets,
       fetchMore,
       updateDataset: putDataset,
+      createDataset: createDataset,
       uploadDatasetFile: uploadDatasetFile,
       deleteDataset: delDataset,
       isLoading: loading,
@@ -266,6 +308,7 @@ export const DatasetsProvider = ({
       fetchDatasets,
       fetchMore,
       putDataset,
+      createDataset,
       uploadDatasetFile,
       delDataset,
       loading,

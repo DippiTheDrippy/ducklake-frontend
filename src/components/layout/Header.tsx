@@ -18,7 +18,7 @@ export default function Header() {
   const muiTheme = useMuiTheme();
   const { isDark, toggleTheme } = useTheme();
   const auth = useAuth();
-  const user = useUser();
+  const { isAdmin, backendUser } = useUser();
 
   const location = useLocation();
   const isActiveRoute = (path: string) => {
@@ -128,7 +128,6 @@ export default function Header() {
           >
             Browse
           </Button>
-
           <Button
             component={NavLink}
             to="/favorites"
@@ -139,7 +138,6 @@ export default function Header() {
           >
             Favorites
           </Button>
-
           <Button
             component={NavLink}
             to="/keys"
@@ -150,6 +148,22 @@ export default function Header() {
           >
             My Keys
           </Button>
+          {isAdmin && (
+            <Button
+              component={NavLink}
+              to="/admin"
+              end={false}
+              color="inherit"
+              size="small"
+              sx={{
+                ...getNavButtonSx(isActiveRoute("/admin")),
+                color: "warning.main",
+                fontWeight: 600,
+              }}
+            >
+              Admin
+            </Button>
+          )}
         </Box>
 
         <Box
@@ -200,8 +214,8 @@ export default function Header() {
               },
             }}
           >
-            {auth.isLoading ? "Loading..." : `${user.backendUser?.firstName}`}{" "}
-            {`${user.backendUser?.lastName}`}
+            {auth.isLoading ? "Loading..." : `${backendUser?.firstName}`}{" "}
+            {`${backendUser?.lastName}`}
           </Button>
         </Box>
       </Toolbar>
