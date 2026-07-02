@@ -4,6 +4,7 @@ import NotFound from "./pages/NotFound";
 import Layout from "./components/layout/Layout";
 import Browse from "./pages/Browse";
 import Dataset from "./pages/Dataset";
+import Favorites from "./pages/Favorites";
 
 export const routes: RouteObject[] = [
   {
@@ -14,6 +15,7 @@ export const routes: RouteObject[] = [
 
       { path: "browse", element: <Browse /> },
       { path: "datasets/:id", element: <Dataset /> },
+      { path: "favorites", element: <Favorites /> },
 
       { path: "*", element: <NotFound /> },
     ],

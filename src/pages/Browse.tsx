@@ -12,13 +12,10 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 
 import { useDatasets } from "../contexts/DatasetsContext";
-import DatasetCard from "../components/datasets/DatasetCard";
-import DatasetCardSkeleton from "../components/datasets/DatasetCardSkeleton";
 import { AddOutlined } from "@mui/icons-material";
 import UploadDialog from "../components/UploadDialog";
 import { useUser } from "../contexts/UserContext";
-
-const SKELETON_COUNT = 4;
+import DatasetGrid from "../components/datasets/DatasetGrid";
 
 export default function Browse() {
   const {
@@ -48,8 +45,6 @@ export default function Browse() {
 
     return () => window.clearTimeout(timeout);
   }, [search, searchDatasets]);
-
-  const showEmptyState = !isLoading && datasets.length === 0;
 
   return (
     <Container
@@ -150,63 +145,14 @@ export default function Browse() {
           )}
         </Box>
 
-        {showEmptyState ? (
-          <Typography
-            sx={{
-              fontSize: "0.85rem",
-              color: "text.secondary",
-            }}
-          >
-            No datasets found.
-          </Typography>
-        ) : (
-          <>
-            <Box
-              sx={{
-                display: "grid",
-                gridTemplateColumns: {
-                  xs: "1fr",
-                  sm: "repeat(2, minmax(0, 1fr))",
-                  lg: "repeat(3, minmax(0, 1fr))",
-                },
-                gap: 2,
-                alignItems: "stretch",
-              }}
-            >
-              {isLoading
-                ? Array.from({ length: SKELETON_COUNT }).map((_, index) => (
-                    <DatasetCardSkeleton key={index} />
-                  ))
-                : datasets.map((dataset) => (
-                    <DatasetCard key={dataset.id} dataset={dataset} />
-                  ))}
-            </Box>
-
-            {hasMore && !isLoading ? (
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  mt: 1,
-                }}
-              >
-                <Button
-                  onClick={() => {
-                    fetchMore();
-                  }}
-                  disabled={isFetchingMore}
-                  variant="outlined"
-                  size="large"
-                  sx={{
-                    minWidth: 120,
-                  }}
-                >
-                  {isFetchingMore ? "Loading..." : "Load more"}
-                </Button>
-              </Box>
-            ) : null}
-          </>
-        )}
+        <DatasetGrid
+          datasets={datasets}
+          isLoading={isLoading}
+          hasMore={hasMore}
+          isFetchingMore={isFetchingMore}
+          onFetchMore={fetchMore}
+          emptyMessage="No datasets found."
+        />
       </Box>
 
       <UploadDialog

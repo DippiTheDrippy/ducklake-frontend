@@ -156,7 +156,7 @@ export const DatasetsProvider = ({
     }
 
     const trimmed = lastSearch.trim();
-    const page = Math.floor(datasets.length / pageSize);
+    const page = Math.floor((datasets.length + pageSize - 1) / pageSize);
 
     try {
       loadingRef.current = true;

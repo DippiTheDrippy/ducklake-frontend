@@ -1,6 +1,12 @@
 import { Box, Button, Chip, IconButton, Typography } from "@mui/material";
-import { DeleteForeverOutlined, UploadFileOutlined } from "@mui/icons-material";
+import {
+  DeleteForeverOutlined,
+  Favorite,
+  FavoriteBorder,
+  UploadFileOutlined,
+} from "@mui/icons-material";
 import type { Dataset as DatasetInfo } from "../../types/dataset";
+import { useFavorites } from "../../contexts/FavoritesContext";
 
 interface DatasetHeaderProps {
   dataset: DatasetInfo;
@@ -17,6 +23,9 @@ export default function DatasetHeader({
   onDelete,
   onUpload,
 }: Readonly<DatasetHeaderProps>) {
+  const { isFavorite, favoriteDataset, unfavoriteDataset } = useFavorites();
+  const isFavorited = isFavorite(dataset.id);
+
   return (
     <Box
       sx={{
@@ -102,6 +111,26 @@ export default function DatasetHeader({
           >
             <UploadFileOutlined fontSize="medium" />
           </Button>
+
+          <IconButton
+            aria-label={
+              isFavorited ? "Remove from favorites" : "Add to favorites"
+            }
+            color="primary"
+            disabled={isLoading}
+            onClick={
+              isFavorited
+                ? () => unfavoriteDataset(dataset.id)
+                : () => favoriteDataset(dataset)
+            }
+            size="medium"
+          >
+            {isFavorited ? (
+              <Favorite fontSize="large" />
+            ) : (
+              <FavoriteBorder fontSize="large" />
+            )}
+          </IconButton>
         </Box>
       )}
     </Box>

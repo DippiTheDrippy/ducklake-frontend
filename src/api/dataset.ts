@@ -69,7 +69,10 @@ export async function searchDatasets(
 
 // FAVORTIES
 
-export async function listFavorites(pageIndex: number, pageSize: number) {
+export async function listFavorites(
+  pageIndex: number,
+  pageSize: number,
+): Promise<Pagination<Dataset>> {
   const { data, error } = await api.GET("/api/datasets/favorite", {
     params: {
       query: {
@@ -84,7 +87,7 @@ export async function listFavorites(pageIndex: number, pageSize: number) {
     throw error;
   }
 
-  return data;
+  return data as Pagination<Dataset>;
 }
 
 export async function favoriteDataset(id: string) {
