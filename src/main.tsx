@@ -9,6 +9,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { UserProvider } from "./contexts/UserContext.tsx";
 import { DatasetsProvider } from "./contexts/DatasetsContext.tsx";
 import { FavoritesProvider } from "./contexts/FavoritesContext.tsx";
+import { CredentialsProvider } from "./contexts/CredentialsContext.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -19,7 +20,9 @@ createRoot(document.getElementById("root")!).render(
             <UserProvider>
               <DatasetsProvider>
                 <FavoritesProvider>
-                  <App />
+                  <CredentialsProvider>
+                    <App />
+                  </CredentialsProvider>
                 </FavoritesProvider>
               </DatasetsProvider>
             </UserProvider>

@@ -3,7 +3,7 @@ import { Box, Container, Typography } from "@mui/material";
 import { useFavorites } from "../contexts/FavoritesContext";
 import DatasetGrid from "../components/datasets/DatasetGrid";
 
-export default function Browse() {
+export default function Favorites() {
   const {
     hasMore,
     isFetchingMore,

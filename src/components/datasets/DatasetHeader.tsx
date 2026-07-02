@@ -93,6 +93,7 @@ export default function DatasetHeader({
             sx={{
               backgroundColor: "error.main",
               color: "error.contrastText",
+              width: "3rem",
             }}
           >
             <DeleteForeverOutlined fontSize="medium" />
@@ -107,6 +108,7 @@ export default function DatasetHeader({
             sx={{
               backgroundColor: "success.main",
               color: "success.contrastText",
+              width: "3rem",
             }}
           >
             <UploadFileOutlined fontSize="medium" />
@@ -126,9 +128,9 @@ export default function DatasetHeader({
             size="medium"
           >
             {isFavorited ? (
-              <Favorite fontSize="large" />
+              <Favorite fontSize="medium" />
             ) : (
-              <FavoriteBorder fontSize="large" />
+              <FavoriteBorder fontSize="medium" />
             )}
           </IconButton>
         </Box>

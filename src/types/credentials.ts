@@ -1,7 +1,9 @@
 export interface Credential {
   id: string;
 
-  accessLevel: string;
+  accessLevel: "READ" | "WRITE";
+
+  name: string;
 
   datasetId: string;
   userId: string;

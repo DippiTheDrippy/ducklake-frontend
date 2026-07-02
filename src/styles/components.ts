@@ -67,7 +67,8 @@ export const getComponents = (
           textTransform: "none",
           borderRadius: 8,
           boxShadow: "none",
-          minHeight: 32,
+          minHeight: "2vh",
+          minWidth: "2vw",
         },
 
         contained: {

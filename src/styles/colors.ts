@@ -22,20 +22,23 @@ export const DARK_COLORS = {
 };
 
 export const LIGHT_COLORS = {
-  background: "#FFFFFF",
-  paper: "#F7F8FA",
-  card: "#F7F8FA",
+  background: "#F8F6F0",
+  paper: "#F1EFE8",
+  card: "#F1EFE8",
 
-  onBackground: "#1A1A1A",
-  onPaper: "#222222",
+  onBackground: "#1B1F26",
+  onPaper: "#242933",
 
-  textPrimary: "#1A1A1A",
-  textSecondary: "#666666",
+  textPrimary: "#1B1F26",
+  textSecondary: "#656A73",
 
   primaryContrast: "#071013",
-  secondary: "#5EC8C1",
 
-  error: "#E25B52",
-  warning: "#D9902F",
-  success: "#3FA66B",
+  secondary: "#1ab2aa",
+
+  error: "#DC2626",
+  warning: "#D97706",
+  success: "#16A34A",
+
+  linkHover: "#267C77",
 };

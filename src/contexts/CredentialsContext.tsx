@@ -16,7 +16,23 @@ import type { Pagination } from "../types/pagination";
 import type { Dayjs } from "dayjs";
 import type { Credential } from "../types/credentials";
 
-interface CredentialsContextType {}
+interface CredentialsContextType {
+  credentials: Credential[];
+  totalItems: number;
+  loading: boolean;
+  isFetchingMore: boolean;
+  credential: Credential | null;
+  fetchCredentials: () => Promise<void>;
+  fetchMore: () => Promise<void>;
+  createCredentials: (
+    datasetId: string,
+    accessLevel: "READ" | "WRITE",
+    expiresAt: Dayjs,
+    neverExpires: boolean,
+  ) => Promise<void>;
+  rotateCredentials: (id: string) => Promise<void>;
+  delCredentials: (id: string) => Promise<boolean>;
+}
 
 const CredentialsContext = createContext<CredentialsContextType | undefined>(
   undefined,
@@ -58,28 +74,6 @@ export const CredentialsProvider = ({
       ...incoming.filter((credential) => !existingIds.has(credential.id)),
     ];
   }
-
-  // const fetchDataset = useCallback(
-  //   async (id: string) => {
-  //     if (loadingRef.current) return;
-  //     setDataset(null);
-
-  //     try {
-  //       loadingRef.current = true;
-  //       setLoading(true);
-
-  //       const resp: DatasetWithSummary = await getDataset(id);
-
-  //       setDataset(resp);
-  //     } catch (err) {
-  //       console.error("getDataset: " + err);
-  //     } finally {
-  //       loadingRef.current = false;
-  //       setLoading(false);
-  //     }
-  //   },
-  //   [datasets.length, pageSize],
-  // );
 
   const MIN_LOADING_MS = 300;
   const sleep = (ms: number) =>
