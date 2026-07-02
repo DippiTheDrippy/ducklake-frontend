@@ -21,6 +21,7 @@
     "dayjs": "^1.11.21",
     "framer-motion": "^12.42.0",
     "fs": "^0.0.1-security",
+    "next": "^16.2.10",
     "notistack": "^3.0.2",
     "oidc-client-ts": "^3.5.0",
     "openapi-fetch": "^0.17.0",

@@ -235,6 +235,7 @@ export const DatasetsProvider = ({
         setLoading(true);
         const dataset = await createDatasetFromFile(metadata, file);
         setDatasets((prev) => [...prev, dataset]);
+        setTotalItems((prev) => prev + 1);
       } catch (err) {
         console.error("createDataset: " + err);
       } finally {

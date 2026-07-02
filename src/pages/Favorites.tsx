@@ -14,6 +14,7 @@ export default function Favorites() {
   } = useFavorites();
 
   useEffect(() => {
+    if (!hasMore) return;
     listFavorites();
   }, [listFavorites]);
 

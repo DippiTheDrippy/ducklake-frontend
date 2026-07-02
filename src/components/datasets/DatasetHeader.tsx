@@ -3,6 +3,7 @@ import {
   DeleteForeverOutlined,
   Favorite,
   FavoriteBorder,
+  Key,
   UploadFileOutlined,
 } from "@mui/icons-material";
 import type { Dataset as DatasetInfo } from "../../types/dataset";
@@ -84,6 +85,21 @@ export default function DatasetHeader({
 
       {isAdmin && (
         <Box sx={{ display: "flex", gap: 1, flexShrink: 0 }}>
+          <Button
+            aria-label="Delete dataset"
+            color="warning"
+            disabled={isLoading}
+            onClick={onDelete}
+            size="small"
+            sx={{
+              backgroundColor: "warning.main",
+              color: "warning.contrastText",
+              width: "3rem",
+            }}
+          >
+            <Key fontSize="medium" />
+          </Button>
+
           <Button
             aria-label="Delete dataset"
             color="error"

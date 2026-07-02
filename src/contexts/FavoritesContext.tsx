@@ -48,7 +48,7 @@ export const FavoritesProvider = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [isFetchingMore, setIsFetchingMore] = useState<boolean>(false);
   const [pageSize] = useState<number>(20);
-  const [totalItems, setTotalItems] = useState<number>(0);
+  const [totalItems, setTotalItems] = useState<number | null>(null);
   const hasMore = totalItems === null || favorites.length < totalItems;
   const loadingRef = useRef(false);
 
@@ -140,6 +140,7 @@ export const FavoritesProvider = ({
 
         await favoriteDataset(dataset.id);
         setFavorites((prev) => [...prev, dataset]);
+        setTotalItems((prev) => (prev === null ? 1 : prev + 1));
       } catch (err) {
         console.error("createDataset: " + err);
       } finally {
@@ -159,7 +160,7 @@ export const FavoritesProvider = ({
         setLoading(true);
         await unfavoriteDataset(id);
         setFavorites((prev) => prev.filter((dataset) => dataset.id !== id));
-        setTotalItems((prev) => Math.max(0, prev - 1));
+        setTotalItems((prev) => Math.max(0, prev === null ? 0 : prev - 1));
       } catch (err) {
         console.error("deleteDataset: " + err);
       } finally {

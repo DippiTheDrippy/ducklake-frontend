@@ -19,6 +19,17 @@ export const DARK_COLORS = {
   success: "#81C995",
 
   linkHover: "#8FDAD5",
+
+  homeBackground: "#0F1117",
+  homePaper: "#171A22",
+  homeGlowPrimary: "#6FAFD6",
+  homeGlowSecondary: "#78D0CA",
+
+  lakeTop: "#233D4D",
+  lakeMiddle: "#246A79",
+  lakeBottom: "#1E8A86",
+  lakeFoam: "#D9FFF8",
+  lakeTextBubble: "#171A22",
 };
 
 export const LIGHT_COLORS = {
@@ -41,4 +52,15 @@ export const LIGHT_COLORS = {
   success: "#16A34A",
 
   linkHover: "#267C77",
+
+  homeBackground: "#F8F6F0",
+  homePaper: "#FFFDF7",
+  homeGlowPrimary: "#B7DDEF",
+  homeGlowSecondary: "#BDEAE3",
+
+  lakeTop: "#E1F5FB",
+  lakeMiddle: "#A9DDE8",
+  lakeBottom: "#78C5D2",
+  lakeFoam: "#FFFFFF",
+  lakeTextBubble: "#FFFDF7",
 };
