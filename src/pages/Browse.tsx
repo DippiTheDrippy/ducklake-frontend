@@ -13,7 +13,7 @@ import SearchIcon from "@mui/icons-material/Search";
 
 import { useDatasets } from "../contexts/DatasetsContext";
 import { AddOutlined } from "@mui/icons-material";
-import UploadDialog from "../components/UploadDialog";
+import UploadDialog from "../components/dialog/UploadDialog";
 import { useUser } from "../contexts/UserContext";
 import DatasetGrid from "../components/datasets/DatasetGrid";
 
@@ -101,19 +101,8 @@ export default function Browse() {
               placeholder="Search datasets"
               size="small"
               fullWidth
-              slotProps={{
-                input: {
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon
-                        fontSize="small"
-                        sx={{ color: "text.secondary" }}
-                      />
-                    </InputAdornment>
-                  ),
-                },
-              }}
               sx={{
+                mt: 2,
                 maxWidth: 520,
                 "& .MuiInputBase-root": {
                   fontSize: "0.85rem",
@@ -122,6 +111,7 @@ export default function Browse() {
               }}
             />
           </Box>
+
           {isAdmin && (
             <Box
               sx={{

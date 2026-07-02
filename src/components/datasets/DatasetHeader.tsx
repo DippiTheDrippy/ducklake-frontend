@@ -15,6 +15,7 @@ interface DatasetHeaderProps {
   isLoading: boolean;
   onDelete: () => void;
   onUpload?: () => void;
+  onCreateCredentials?: () => void;
 }
 
 export default function DatasetHeader({
@@ -23,6 +24,7 @@ export default function DatasetHeader({
   isLoading,
   onDelete,
   onUpload,
+  onCreateCredentials,
 }: Readonly<DatasetHeaderProps>) {
   const { isFavorite, favoriteDataset, unfavoriteDataset } = useFavorites();
   const isFavorited = isFavorite(dataset.id);
@@ -34,9 +36,16 @@ export default function DatasetHeader({
         justifyContent: "space-between",
         alignItems: "flex-start",
         gap: 2,
+        flexDirection: { xs: "column", md: "row" },
       }}
     >
-      <Box>
+      <Box
+        sx={{
+          minWidth: 0,
+          flex: 1,
+          width: "100%",
+        }}
+      >
         <Box
           sx={{
             display: "flex",
@@ -84,12 +93,21 @@ export default function DatasetHeader({
       </Box>
 
       {isAdmin && (
-        <Box sx={{ display: "flex", gap: 1, flexShrink: 0 }}>
+        <Box
+          sx={{
+            display: "flex",
+            gap: 1,
+            flexShrink: 0,
+            flexWrap: "wrap",
+            justifyContent: { xs: "flex-start", md: "flex-end" },
+            width: { xs: "100%", md: "auto" },
+          }}
+        >
           <Button
             aria-label="Delete dataset"
             color="warning"
             disabled={isLoading}
-            onClick={onDelete}
+            onClick={onCreateCredentials}
             size="small"
             sx={{
               backgroundColor: "warning.main",

@@ -140,9 +140,7 @@ export default function UploadDialog({
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={onClose} disabled={disabled}>
-          Cancel
-        </Button>
+        <Button onClick={onClose}>Cancel</Button>
 
         <Button
           onClick={handleUpload}

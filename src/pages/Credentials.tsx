@@ -3,7 +3,7 @@ import { Box, Container, Typography } from "@mui/material";
 import { useCredentials } from "../contexts/CredentialsContext";
 import { useUser } from "../contexts/UserContext";
 import CredentialCard from "../components/credentials/CredentialCard";
-import ConfirmDialog from "../components/ConfirmDialog";
+import ConfirmDialog from "../components/dialog/ConfirmDialog";
 
 export default function Credentials() {
   const { credentials, loading, fetchCredentials, delCredentials } =

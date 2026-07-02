@@ -4,7 +4,7 @@ import { ArrowForwardOutlined, DeleteForever } from "@mui/icons-material";
 
 import type { Credential } from "../../types/credentials";
 import { useCredentials } from "../../contexts/CredentialsContext";
-import { formatDate, isExpired } from "../../utils/credentialFormatters";
+import { formatDate, isExpired } from "../../utils/credentialHelpers";
 
 interface CredentialCardProps {
   credential: Credential;

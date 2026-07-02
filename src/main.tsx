@@ -10,6 +10,7 @@ import { UserProvider } from "./contexts/UserContext.tsx";
 import { DatasetsProvider } from "./contexts/DatasetsContext.tsx";
 import { FavoritesProvider } from "./contexts/FavoritesContext.tsx";
 import { CredentialsProvider } from "./contexts/CredentialsContext.tsx";
+import { NotificationProvider } from "./contexts/NotificationContext.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -17,15 +18,17 @@ createRoot(document.getElementById("root")!).render(
       <BrowserRouter>
         <OidcProvider>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <UserProvider>
-              <DatasetsProvider>
-                <FavoritesProvider>
-                  <CredentialsProvider>
-                    <App />
-                  </CredentialsProvider>
-                </FavoritesProvider>
-              </DatasetsProvider>
-            </UserProvider>
+            <NotificationProvider>
+              <UserProvider>
+                <DatasetsProvider>
+                  <FavoritesProvider>
+                    <CredentialsProvider>
+                      <App />
+                    </CredentialsProvider>
+                  </FavoritesProvider>
+                </DatasetsProvider>
+              </UserProvider>
+            </NotificationProvider>
           </LocalizationProvider>
         </OidcProvider>
       </BrowserRouter>

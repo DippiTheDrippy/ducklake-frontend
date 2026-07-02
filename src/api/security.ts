@@ -12,7 +12,7 @@ export async function listUsers(pageIndex: number, pageSize: number) {
     },
   });
 
-  if (error) {
+  if (!data || error) {
     console.error("API error:", error);
     throw error;
   }
@@ -29,7 +29,7 @@ export async function getUser(id: string) {
     },
   });
 
-  if (error) {
+  if (!data || error) {
     console.error("API error:", error);
     throw error;
   }
@@ -40,7 +40,7 @@ export async function getUser(id: string) {
 export async function register() {
   const { data, error } = await api.POST("/api/security/register");
 
-  if (error) {
+  if (!data || error) {
     console.error("API error:", error);
     throw error;
   }
@@ -105,7 +105,7 @@ export async function listGroup(pageIndex: number, pageSize: number) {
     },
   });
 
-  if (error) {
+  if (!data || error) {
     console.error("API error:", error);
     throw error;
   }
@@ -122,7 +122,7 @@ export async function getGroup(id: string) {
     },
   });
 
-  if (error) {
+  if (!data || error) {
     console.error("API error:", error);
     throw error;
   }
@@ -139,7 +139,7 @@ export async function createGroup(body: {
     body,
   });
 
-  if (error) {
+  if (!data || error) {
     console.error("API error:", error);
     throw error;
   }

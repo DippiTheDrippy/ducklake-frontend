@@ -1,13 +1,19 @@
+import { useState } from "react";
 import { NavLink, Link as RouterLink, useLocation } from "react-router-dom";
 import {
   Box,
   Button,
   Divider,
+  Drawer,
   IconButton,
+  List,
+  ListItemButton,
+  ListItemText,
+  Stack,
   Toolbar,
   Typography,
 } from "@mui/material";
-import { LightMode, DarkMode } from "@mui/icons-material";
+import { LightMode, DarkMode, Menu, Close } from "@mui/icons-material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { alpha, useTheme as useMuiTheme } from "@mui/material/styles";
 import { useAuth } from "react-oidc-context";
@@ -19,8 +25,10 @@ export default function Header() {
   const { isDark, toggleTheme } = useTheme();
   const auth = useAuth();
   const { isAdmin, backendUser } = useUser();
-
   const location = useLocation();
+
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   const isActiveRoute = (path: string) => {
     return (
       location.pathname === path || location.pathname.startsWith(`${path}/`)
@@ -36,17 +44,35 @@ export default function Header() {
     void auth.signinRedirect();
   };
 
-  const getNavButtonSx = (isActive: boolean) => ({
-    color: isActive ? "text.primary" : "text.secondary",
+  const userLabel = auth.isLoading
+    ? "Loading..."
+    : auth.isAuthenticated
+      ? `${backendUser?.firstName ?? ""} ${backendUser?.lastName ?? ""}`.trim()
+      : "Sign in";
+
+  const navItems = [
+    { label: "Browse", path: "/browse" },
+    { label: "Favorites", path: "/favorites" },
+    { label: "My Keys", path: "/keys" },
+    ...(isAdmin ? [{ label: "Admin", path: "/admin", admin: true }] : []),
+  ];
+
+  const getNavButtonSx = (isActive: boolean, admin?: boolean) => ({
+    color: admin
+      ? "warning.main"
+      : isActive
+        ? "text.primary"
+        : "text.secondary",
     fontSize: "0.8rem",
     px: 1.25,
     minHeight: 28,
     borderRadius: 1.5,
+    fontWeight: admin ? 600 : 500,
     backgroundColor: isActive
       ? alpha(muiTheme.palette.mode === "dark" ? "#FFFFFF" : "#000000", 0.1)
       : "transparent",
     "&:hover": {
-      color: "text.primary",
+      color: admin ? "warning.main" : "text.primary",
     },
   });
 
@@ -89,7 +115,7 @@ export default function Header() {
           <Box
             component="img"
             src="/favicon.ico"
-            alt="cbhcloud icon"
+            alt="cbhpond icon"
             sx={{
               width: 32,
               height: 32,
@@ -109,67 +135,40 @@ export default function Header() {
           </Typography>
         </Box>
 
-        <Divider orientation="vertical" flexItem />
+        <Divider
+          orientation="vertical"
+          flexItem
+          sx={{ display: { xs: "none", md: "block" } }}
+        />
 
+        {/* Desktop navigation */}
         <Box
           sx={{
-            display: "flex",
+            display: { xs: "none", md: "flex" },
             alignItems: "center",
-            gap: { xs: 0.5, md: 1 },
+            gap: 1,
           }}
         >
-          <Button
-            component={NavLink}
-            to="/browse"
-            end={false}
-            color="inherit"
-            size="small"
-            sx={getNavButtonSx(isActiveRoute("/browse"))}
-          >
-            Browse
-          </Button>
-          <Button
-            component={NavLink}
-            to="/favorites"
-            end={false}
-            color="inherit"
-            size="small"
-            sx={getNavButtonSx(isActiveRoute("/favorites"))}
-          >
-            Favorites
-          </Button>
-          <Button
-            component={NavLink}
-            to="/keys"
-            end={false}
-            color="inherit"
-            size="small"
-            sx={getNavButtonSx(isActiveRoute("/keys"))}
-          >
-            My Keys
-          </Button>
-          {isAdmin && (
+          {navItems.map((item) => (
             <Button
+              key={item.path}
               component={NavLink}
-              to="/admin"
+              to={item.path}
               end={false}
               color="inherit"
               size="small"
-              sx={{
-                ...getNavButtonSx(isActiveRoute("/admin")),
-                color: "warning.main",
-                fontWeight: 600,
-              }}
+              sx={getNavButtonSx(isActiveRoute(item.path), item.admin)}
             >
-              Admin
+              {item.label}
             </Button>
-          )}
+          ))}
         </Box>
 
+        {/* Desktop actions */}
         <Box
           sx={{
             ml: "auto",
-            display: "flex",
+            display: { xs: "none", md: "flex" },
             alignItems: "center",
             gap: 1,
           }}
@@ -214,11 +213,156 @@ export default function Header() {
               },
             }}
           >
-            {auth.isLoading ? "Loading..." : `${backendUser?.firstName}`}{" "}
-            {`${backendUser?.lastName}`}
+            {userLabel}
           </Button>
         </Box>
+
+        {/* Mobile actions */}
+        <Box
+          sx={{
+            ml: "auto",
+            display: { xs: "flex", md: "none" },
+            alignItems: "center",
+            gap: 0.5,
+          }}
+        >
+          <IconButton
+            onClick={toggleTheme}
+            color="inherit"
+            size="small"
+            aria-label="Toggle theme"
+            sx={{
+              color: "text.secondary",
+            }}
+          >
+            {isDark ? (
+              <LightMode fontSize="small" />
+            ) : (
+              <DarkMode fontSize="small" />
+            )}
+          </IconButton>
+
+          <IconButton
+            onClick={() => setMobileOpen(true)}
+            color="inherit"
+            aria-label="Open navigation menu"
+            sx={{
+              color: "text.primary",
+            }}
+          >
+            <Menu />
+          </IconButton>
+        </Box>
       </Toolbar>
+
+      <Drawer
+        anchor="right"
+        open={mobileOpen}
+        onClose={() => setMobileOpen(false)}
+        slotProps={{
+          paper: {
+            sx: {
+              width: 280,
+              backgroundColor: "background.default",
+              color: "text.primary",
+            },
+          },
+        }}
+      >
+        <Box sx={{ p: 2 }}>
+          <Stack
+            direction="row"
+            sx={{
+              mb: 1,
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Typography
+              sx={{
+                fontWeight: 700,
+                letterSpacing: "-0.02em",
+              }}
+            >
+              cbhpond
+            </Typography>
+
+            <IconButton
+              onClick={() => setMobileOpen(false)}
+              aria-label="Close navigation menu"
+            >
+              <Close />
+            </IconButton>
+          </Stack>
+
+          <Divider sx={{ mb: 1 }} />
+
+          <List disablePadding>
+            {navItems.map((item) => {
+              const isActive = isActiveRoute(item.path);
+
+              return (
+                <ListItemButton
+                  key={item.path}
+                  component={NavLink}
+                  to={item.path}
+                  onClick={() => setMobileOpen(false)}
+                  sx={{
+                    borderRadius: 2,
+                    my: 0.5,
+                    color: item.admin
+                      ? "warning.main"
+                      : isActive
+                        ? "text.primary"
+                        : "text.secondary",
+                    backgroundColor: isActive
+                      ? alpha(
+                          muiTheme.palette.mode === "dark"
+                            ? "#FFFFFF"
+                            : "#000000",
+                          0.08,
+                        )
+                      : "transparent",
+                  }}
+                >
+                  <ListItemText
+                    primary={
+                      <Typography
+                        sx={{ fontWeight: isActive || item.admin ? 700 : 500 }}
+                        noWrap
+                      >
+                        {item.label}
+                      </Typography>
+                    }
+                  />
+                </ListItemButton>
+              );
+            })}
+          </List>
+
+          <Divider sx={{ my: 2 }} />
+
+          <Button
+            onClick={handleAuthClick}
+            variant="contained"
+            color="primary"
+            fullWidth
+            startIcon={<LogoutIcon />}
+            disabled={auth.isLoading}
+            sx={{
+              borderRadius: 2,
+              boxShadow: "none",
+              textTransform: "none",
+              fontWeight: 700,
+              "&:hover": {
+                boxShadow: "none",
+              },
+            }}
+          >
+            {userLabel}
+          </Button>
+        </Box>
+      </Drawer>
     </Box>
   );
 }

@@ -13,7 +13,7 @@ export async function createEmptyDataset(body: {
     body,
   });
 
-  if (error) {
+  if (!data || error) {
     console.error("API error:", error);
     throw error;
   }
@@ -51,7 +51,7 @@ export async function createDatasetFromFile(
     },
   });
 
-  if (error) {
+  if (!data || error) {
     console.error("API error:", error);
     throw error;
   }

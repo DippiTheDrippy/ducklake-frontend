@@ -15,6 +15,7 @@ import {
 import type { Pagination } from "../types/pagination";
 import type { Dayjs } from "dayjs";
 import type { Credential } from "../types/credentials";
+import { useNotification } from "./NotificationContext";
 
 interface CredentialsContextType {
   credentials: Credential[];
@@ -22,12 +23,14 @@ interface CredentialsContextType {
   loading: boolean;
   isFetchingMore: boolean;
   credential: Credential | null;
+  resetCredential: () => void;
   fetchCredentials: () => Promise<void>;
   fetchMore: () => Promise<void>;
   createCredentials: (
     datasetId: string,
+    name: string,
     accessLevel: "READ" | "WRITE",
-    expiresAt: Dayjs,
+    expiresAt: Dayjs | null,
     neverExpires: boolean,
   ) => Promise<void>;
   rotateCredentials: (id: string) => Promise<void>;
@@ -56,6 +59,7 @@ export const CredentialsProvider = ({
   const [credentials, setCredentials] = useState<Credential[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [isFetchingMore, setIsFetchingMore] = useState<boolean>(false);
+  const notification = useNotification();
 
   const [pageSize] = useState<number>(20);
   const [totalItems, setTotalItems] = useState<number>(0);
@@ -74,6 +78,10 @@ export const CredentialsProvider = ({
       ...incoming.filter((credential) => !existingIds.has(credential.id)),
     ];
   }
+
+  const resetCredential = useCallback(() => {
+    setCredential(null);
+  }, []);
 
   const MIN_LOADING_MS = 300;
   const sleep = (ms: number) =>
@@ -99,6 +107,9 @@ export const CredentialsProvider = ({
       setTotalItems(resp.totalItems);
     } catch (err) {
       console.error("listCredentials:", err);
+      notification.error(
+        "Failed to fetch credentials. Please try again later.",
+      );
     } finally {
       const elapsed = performance.now() - startedAt;
       const remaining = MIN_LOADING_MS - elapsed;
@@ -134,6 +145,9 @@ export const CredentialsProvider = ({
       setTotalItems(resp.totalItems);
     } catch (err) {
       console.error("fetchMoreCredentials:", err);
+      notification.error(
+        "Failed to fetch more credentials. Please try again later.",
+      );
     } finally {
       loadingRef.current = false;
       setIsFetchingMore(false);
@@ -143,8 +157,9 @@ export const CredentialsProvider = ({
   const createCredentials = useCallback(
     async (
       datasetId: string,
+      name: string,
       accessLevel: "READ" | "WRITE",
-      expiresAt: Dayjs,
+      expiresAt: Dayjs | null,
       neverExpires: boolean,
     ) => {
       if (loadingRef.current) return;
@@ -154,6 +169,7 @@ export const CredentialsProvider = ({
         setLoading(true);
         const credential = await createDatasetCredential(
           datasetId,
+          name,
           accessLevel,
           expiresAt,
           neverExpires,
@@ -167,6 +183,10 @@ export const CredentialsProvider = ({
         });
       } catch (err) {
         console.error("createCredentials: " + err);
+        notification.error(
+          "Failed to create credentials: " +
+            (err instanceof Error ? err.message : String(err)),
+        );
       } finally {
         loadingRef.current = false;
         setLoading(false);
@@ -194,6 +214,10 @@ export const CredentialsProvider = ({
         );
       } catch (err) {
         console.error("rotateCredentials: " + err);
+        notification.error(
+          "Failed to rotate credentials: " +
+            (err instanceof Error ? err.message : String(err)),
+        );
       } finally {
         loadingRef.current = false;
         setLoading(false);
@@ -217,6 +241,10 @@ export const CredentialsProvider = ({
         return true;
       } catch (err) {
         console.error("deleteCredential: " + err);
+        notification.error(
+          "Failed to delete credential: " +
+            (err instanceof Error ? err.message : String(err)),
+        );
         return false;
       } finally {
         loadingRef.current = false;
@@ -233,6 +261,7 @@ export const CredentialsProvider = ({
       loading,
       isFetchingMore,
       credential,
+      resetCredential,
       fetchCredentials,
       fetchMore,
       createCredentials,
@@ -245,6 +274,7 @@ export const CredentialsProvider = ({
       loading,
       isFetchingMore,
       credential,
+      resetCredential,
       fetchCredentials,
       fetchMore,
       createCredentials,

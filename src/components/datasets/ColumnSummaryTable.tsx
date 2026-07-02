@@ -15,7 +15,7 @@ import {
   formatColumnType,
   formatPercentage,
   formatValue,
-} from "../../utils/datasetFormatters";
+} from "../../utils/datasetHelpers";
 
 interface ColumnSummaryTableProps {
   summary: ColumnSummary[];

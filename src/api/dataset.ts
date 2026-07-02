@@ -15,7 +15,7 @@ export async function getDataset(id: string): Promise<DatasetWithSummary> {
     },
   });
 
-  if (error) {
+  if (!data || error) {
     console.error("API error:", error);
     throw error;
   }
@@ -36,7 +36,7 @@ export async function listDatasets(
     },
   });
 
-  if (error) {
+  if (!data || error) {
     console.error("API error:", error);
     throw error;
   }
@@ -59,7 +59,7 @@ export async function searchDatasets(
     },
   });
 
-  if (error) {
+  if (!data || error) {
     console.error("API error:", error);
     throw error;
   }
@@ -82,7 +82,7 @@ export async function listFavorites(
     },
   });
 
-  if (error) {
+  if (!data || error) {
     console.error("API error:", error);
     throw error;
   }
@@ -139,7 +139,7 @@ export async function listCredentials(
     },
   });
 
-  if (error) {
+  if (!data || error) {
     console.error("API error:", error);
     throw error;
   }
@@ -156,7 +156,7 @@ export async function getDatasetCredential(datasetId: string) {
     },
   });
 
-  if (error) {
+  if (!data || error) {
     console.error("API error:", error);
     throw error;
   }
@@ -166,8 +166,9 @@ export async function getDatasetCredential(datasetId: string) {
 
 export async function createDatasetCredential(
   datasetId: string,
+  name: string,
   accessLevel: "READ" | "WRITE",
-  expiresAt: Dayjs,
+  expiresAt: Dayjs | null,
   neverExpires: boolean,
 ): Promise<Credential> {
   const { data, error } = await api.POST("/api/datasets/{id}/credentials", {
@@ -177,15 +178,16 @@ export async function createDatasetCredential(
       },
     },
     body: {
+      name: name,
       access: accessLevel,
-      expiresAt: expiresAt.toISOString(),
+      expiresAt: expiresAt ? expiresAt.toISOString() : undefined,
       neverExpires: neverExpires,
     },
   });
 
-  if (error) {
+  if (!data || error) {
     console.error("API error:", error);
-    throw error;
+    throw new Error(error);
   }
 
   return data as Credential;
@@ -205,7 +207,7 @@ export async function rotateDatasetCredential(
     },
   );
 
-  if (error) {
+  if (!data || error) {
     console.error("API error:", error);
     throw error;
   }

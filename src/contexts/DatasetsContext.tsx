@@ -15,6 +15,7 @@ import {
   deleteDataset,
   updateDataset,
 } from "../api/admin";
+import { useNotification } from "./NotificationContext";
 
 interface DatasetsContextType {
   dataset: DatasetWithSummary | null;
@@ -73,6 +74,8 @@ export const DatasetsProvider = ({
   const hasMore = totalItems === null || datasets.length < totalItems;
   const loadingRef = useRef(false);
 
+  const notification = useNotification();
+
   function appendUniqueDatasets(current: Dataset[], incoming: Dataset[]) {
     const existingIds = new Set(current.map((dataset) => dataset.id));
 
@@ -96,6 +99,7 @@ export const DatasetsProvider = ({
         setDataset(resp);
       } catch (err) {
         console.error("getDataset: " + err);
+        notification.error("Failed to fetch dataset.");
       } finally {
         loadingRef.current = false;
         setLoading(false);
@@ -132,6 +136,7 @@ export const DatasetsProvider = ({
         setLastSearch(trimmed);
       } catch (err) {
         console.error("searchDatasets:", err);
+        notification.error("Failed to fetch datasets. Please try again later.");
       } finally {
         const elapsed = performance.now() - startedAt;
         const remaining = MIN_LOADING_MS - elapsed;
@@ -171,6 +176,9 @@ export const DatasetsProvider = ({
       setTotalItems(resp.totalItems);
     } catch (err) {
       console.error("fetchMoreDatasets:", err);
+      notification.error(
+        "Failed to fetch more datasets. Please try again later.",
+      );
     } finally {
       loadingRef.current = false;
       setIsFetchingMore(false);
@@ -210,6 +218,10 @@ export const DatasetsProvider = ({
         );
       } catch (err) {
         console.error("updateDataset: " + err);
+        notification.error(
+          "Failed to update dataset: " +
+            (err instanceof Error ? err.message : String(err)),
+        );
       } finally {
         loadingRef.current = false;
         setLoading(false);
@@ -238,6 +250,10 @@ export const DatasetsProvider = ({
         setTotalItems((prev) => prev + 1);
       } catch (err) {
         console.error("createDataset: " + err);
+        notification.error(
+          "Failed to create dataset: " +
+            (err instanceof Error ? err.message : String(err)),
+        );
       } finally {
         loadingRef.current = false;
         setLoading(false);
@@ -256,6 +272,10 @@ export const DatasetsProvider = ({
         await appendDataFromFile(id, file);
       } catch (err) {
         console.error("uploadDatasetFile: " + err);
+        notification.error(
+          "Failed to upload file to dataset: " +
+            (err instanceof Error ? err.message : String(err)),
+        );
       } finally {
         loadingRef.current = false;
         setLoading(false);
@@ -277,6 +297,10 @@ export const DatasetsProvider = ({
         return true;
       } catch (err) {
         console.error("deleteDataset: " + err);
+        notification.error(
+          "Failed to delete dataset: " +
+            (err instanceof Error ? err.message : String(err)),
+        );
         return false;
       } finally {
         loadingRef.current = false;

@@ -13,6 +13,7 @@ import {
   unfavoriteDataset,
 } from "../api/dataset";
 import type { Pagination } from "../types/pagination";
+import { useNotification } from "./NotificationContext";
 
 interface FavoritesContextType {
   favorites: Dataset[];
@@ -51,6 +52,8 @@ export const FavoritesProvider = ({
   const [totalItems, setTotalItems] = useState<number | null>(null);
   const hasMore = totalItems === null || favorites.length < totalItems;
   const loadingRef = useRef(false);
+
+  const notification = useNotification();
 
   function appendUniqueDatasets(current: Dataset[], incoming: Dataset[]) {
     const existingIds = new Set(current.map((dataset) => dataset.id));
@@ -92,6 +95,9 @@ export const FavoritesProvider = ({
       setTotalItems(resp.totalItems);
     } catch (err) {
       console.error("listFavorites:", err);
+      notification.error(
+        "Failed to fetch favorite datasets. Please try again later.",
+      );
     } finally {
       const elapsed = performance.now() - startedAt;
       const remaining = MIN_LOADING_MS - elapsed;
@@ -124,6 +130,9 @@ export const FavoritesProvider = ({
       setTotalItems(resp.totalItems);
     } catch (err) {
       console.error("fetchMoreDatasets:", err);
+      notification.error(
+        "Failed to fetch more favorite datasets. Please try again later.",
+      );
     } finally {
       loadingRef.current = false;
       setIsFetchingMore(false);
@@ -143,6 +152,10 @@ export const FavoritesProvider = ({
         setTotalItems((prev) => (prev === null ? 1 : prev + 1));
       } catch (err) {
         console.error("createDataset: " + err);
+        notification.error(
+          "Failed to favorite dataset: " +
+            (err instanceof Error ? err.message : String(err)),
+        );
       } finally {
         loadingRef.current = false;
         setLoading(false);
@@ -163,6 +176,10 @@ export const FavoritesProvider = ({
         setTotalItems((prev) => Math.max(0, prev === null ? 0 : prev - 1));
       } catch (err) {
         console.error("deleteDataset: " + err);
+        notification.error(
+          "Failed to unfavorite dataset: " +
+            (err instanceof Error ? err.message : String(err)),
+        );
       } finally {
         loadingRef.current = false;
         setLoading(false);
