@@ -11,6 +11,7 @@ import { DatasetsProvider } from "./contexts/DatasetsContext.tsx";
 import { FavoritesProvider } from "./contexts/FavoritesContext.tsx";
 import { CredentialsProvider } from "./contexts/CredentialsContext.tsx";
 import { NotificationProvider } from "./contexts/NotificationContext.tsx";
+import { GroupsProvider } from "./contexts/GroupsContext.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -23,7 +24,9 @@ createRoot(document.getElementById("root")!).render(
                 <DatasetsProvider>
                   <FavoritesProvider>
                     <CredentialsProvider>
-                      <App />
+                      <GroupsProvider>
+                        <App />
+                      </GroupsProvider>
                     </CredentialsProvider>
                   </FavoritesProvider>
                 </DatasetsProvider>

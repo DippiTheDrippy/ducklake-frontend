@@ -105,20 +105,14 @@ export const DatasetsProvider = ({
         setLoading(false);
       }
     },
-    [datasets.length, pageSize],
+    [datasets.length, pageSize, notification],
   );
-
-  const MIN_LOADING_MS = 300;
-  const sleep = (ms: number) =>
-    new Promise((resolve) => window.setTimeout(resolve, ms));
 
   const fetchDatasets = useCallback(
     async (search: string) => {
       const trimmed = search.trim();
 
       if (loadingRef.current || lastSearch === trimmed) return;
-
-      const startedAt = performance.now();
 
       try {
         loadingRef.current = true;
@@ -138,18 +132,11 @@ export const DatasetsProvider = ({
         console.error("searchDatasets:", err);
         notification.error("Failed to fetch datasets. Please try again later.");
       } finally {
-        const elapsed = performance.now() - startedAt;
-        const remaining = MIN_LOADING_MS - elapsed;
-
-        if (remaining > 0) {
-          await sleep(remaining);
-        }
-
         loadingRef.current = false;
         setLoading(false);
       }
     },
-    [lastSearch, pageSize],
+    [lastSearch, pageSize, notification],
   );
 
   const fetchMore = useCallback(async () => {
@@ -183,7 +170,7 @@ export const DatasetsProvider = ({
       loadingRef.current = false;
       setIsFetchingMore(false);
     }
-  }, [datasets.length, pageSize, lastSearch, totalItems]);
+  }, [datasets.length, pageSize, lastSearch, totalItems, notification]);
 
   const putDataset = useCallback(
     async (
@@ -227,7 +214,7 @@ export const DatasetsProvider = ({
         setLoading(false);
       }
     },
-    [loading],
+    [notification],
   );
 
   const createDataset = useCallback(
@@ -259,7 +246,7 @@ export const DatasetsProvider = ({
         setLoading(false);
       }
     },
-    [loading],
+    [notification],
   );
 
   const uploadDatasetFile = useCallback(
@@ -281,7 +268,7 @@ export const DatasetsProvider = ({
         setLoading(false);
       }
     },
-    [loading],
+    [notification],
   );
 
   const delDataset = useCallback(
@@ -307,7 +294,7 @@ export const DatasetsProvider = ({
         setLoading(false);
       }
     },
-    [loading],
+    [notification],
   );
 
   const value = useMemo<DatasetsContextType>(

@@ -1,3 +1,6 @@
+import type { Group } from "../types/groups";
+import type { Pagination } from "../types/pagination";
+import type { User } from "../types/user";
 import { api } from "./client";
 
 // USERS
@@ -20,11 +23,17 @@ export async function listUsers(pageIndex: number, pageSize: number) {
   return data;
 }
 
-export async function getUser(id: string) {
-  const { data, error } = await api.GET("/api/security/{id}", {
+export async function searchUsers(
+  search: string,
+  pageIndex: number,
+  pageSize: number,
+) {
+  const { data, error } = await api.GET("/api/security/search", {
     params: {
-      path: {
-        id: id,
+      query: {
+        search: search,
+        pageIndex: pageIndex,
+        pageSize: pageSize,
       },
     },
   });
@@ -37,8 +46,14 @@ export async function getUser(id: string) {
   return data;
 }
 
-export async function register() {
-  const { data, error } = await api.POST("/api/security/register");
+export async function getUser(id: string) {
+  const { data, error } = await api.GET("/api/security/{id}", {
+    params: {
+      path: {
+        id: id,
+      },
+    },
+  });
 
   if (!data || error) {
     console.error("API error:", error);
@@ -76,16 +91,19 @@ export async function updatePermissions(
   return data;
 }
 
-export async function deleteUser(id: string) {
-  const { data, error } = await api.DELETE("/api/security/{id}", {
+// GROUPS
+
+export async function listGroups(pageIndex: number, pageSize: number) {
+  const { data, error } = await api.GET("/api/security/groups", {
     params: {
-      path: {
-        id: id,
+      query: {
+        pageIndex: pageIndex,
+        pageSize: pageSize,
       },
     },
   });
 
-  if (error) {
+  if (!data || error) {
     console.error("API error:", error);
     throw error;
   }
@@ -93,12 +111,36 @@ export async function deleteUser(id: string) {
   return data;
 }
 
-// GROUPS
-
-export async function listGroup(pageIndex: number, pageSize: number) {
-  const { data, error } = await api.GET("/api/security/groups", {
+export async function listMyGroups(
+  pageIndex: number,
+  pageSize: number,
+): Promise<Pagination<Group>> {
+  const { data, error } = await api.GET("/api/security/groups/me", {
     params: {
       query: {
+        pageIndex: pageIndex,
+        pageSize: pageSize,
+      },
+    },
+  });
+
+  if (!data || error) {
+    console.error("API error:", error);
+    throw error;
+  }
+
+  return data as Pagination<Group>;
+}
+
+export async function searchGroups(
+  search: string,
+  pageIndex: number,
+  pageSize: number,
+) {
+  const { data, error } = await api.GET("/api/security/groups/search", {
+    params: {
+      query: {
+        search: search,
         pageIndex: pageIndex,
         pageSize: pageSize,
       },
@@ -130,13 +172,13 @@ export async function getGroup(id: string) {
   return data;
 }
 
-export async function createGroup(body: {
-  name: string;
-  displayName: string;
-  description: string;
-}) {
-  const { data, error } = await api.POST("/api/security/groups", {
-    body,
+export async function getGroupMembers(id: string): Promise<User[]> {
+  const { data, error } = await api.GET("/api/security/groups/{id}/members", {
+    params: {
+      path: {
+        id: id,
+      },
+    },
   });
 
   if (!data || error) {
@@ -144,7 +186,7 @@ export async function createGroup(body: {
     throw error;
   }
 
-  return data;
+  return data as User[];
 }
 
 export async function updateGroupPermissions(
@@ -166,23 +208,6 @@ export async function updateGroupPermissions(
       },
     },
   );
-
-  if (error) {
-    console.error("API error:", error);
-    throw error;
-  }
-
-  return data;
-}
-
-export async function deleteGroup(id: string) {
-  const { data, error } = await api.DELETE("/api/security/groups/{id}", {
-    params: {
-      path: {
-        id: id,
-      },
-    },
-  });
 
   if (error) {
     console.error("API error:", error);

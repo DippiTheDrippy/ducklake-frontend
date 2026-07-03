@@ -83,14 +83,8 @@ export const CredentialsProvider = ({
     setCredential(null);
   }, []);
 
-  const MIN_LOADING_MS = 300;
-  const sleep = (ms: number) =>
-    new Promise((resolve) => window.setTimeout(resolve, ms));
-
   const fetchCredentials = useCallback(async () => {
     if (loadingRef.current) return;
-
-    const startedAt = performance.now();
 
     try {
       loadingRef.current = true;
@@ -111,17 +105,10 @@ export const CredentialsProvider = ({
         "Failed to fetch credentials. Please try again later.",
       );
     } finally {
-      const elapsed = performance.now() - startedAt;
-      const remaining = MIN_LOADING_MS - elapsed;
-
-      if (remaining > 0) {
-        await sleep(remaining);
-      }
-
       loadingRef.current = false;
       setLoading(false);
     }
-  }, [pageSize]);
+  }, [pageSize, notification]);
 
   const fetchMore = useCallback(async () => {
     if (loadingRef.current) return;
@@ -130,7 +117,7 @@ export const CredentialsProvider = ({
       return;
     }
 
-    const page = Math.floor(credentials.length / pageSize);
+    const page = Math.floor((credentials.length + pageSize - 1) / pageSize);
 
     try {
       loadingRef.current = true;
@@ -152,7 +139,7 @@ export const CredentialsProvider = ({
       loadingRef.current = false;
       setIsFetchingMore(false);
     }
-  }, [credentials.length, pageSize, totalItems]);
+  }, [credentials.length, pageSize, totalItems, notification]);
 
   const createCredentials = useCallback(
     async (
@@ -192,7 +179,7 @@ export const CredentialsProvider = ({
         setLoading(false);
       }
     },
-    [loading],
+    [notification],
   );
 
   const rotateCredentials = useCallback(
@@ -223,7 +210,7 @@ export const CredentialsProvider = ({
         setLoading(false);
       }
     },
-    [loading],
+    [notification],
   );
 
   const delCredentials = useCallback(
@@ -251,7 +238,7 @@ export const CredentialsProvider = ({
         setLoading(false);
       }
     },
-    [loading],
+    [notification],
   );
 
   const value = useMemo<CredentialsContextType>(

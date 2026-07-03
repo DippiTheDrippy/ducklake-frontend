@@ -54,6 +54,7 @@ export default function Header() {
     { label: "Browse", path: "/browse" },
     { label: "Favorites", path: "/favorites" },
     { label: "My Keys", path: "/keys" },
+    { label: "My Groups", path: "/groups" },
     ...(isAdmin ? [{ label: "Admin", path: "/admin", admin: true }] : []),
   ];
 
@@ -206,7 +207,7 @@ export default function Header() {
               fontSize: "0.8rem",
               borderRadius: 1.5,
               px: 1.5,
-              py: 0,
+              py: 0.5,
               boxShadow: "none",
               "&:hover": {
                 boxShadow: "none",

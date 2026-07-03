@@ -74,14 +74,8 @@ export const FavoritesProvider = ({
     [favoriteIds],
   );
 
-  const MIN_LOADING_MS = 300;
-  const sleep = (ms: number) =>
-    new Promise((resolve) => window.setTimeout(resolve, ms));
-
   const fetchDatasets = useCallback(async () => {
     if (loadingRef.current) return;
-
-    const startedAt = performance.now();
 
     try {
       loadingRef.current = true;
@@ -99,17 +93,10 @@ export const FavoritesProvider = ({
         "Failed to fetch favorite datasets. Please try again later.",
       );
     } finally {
-      const elapsed = performance.now() - startedAt;
-      const remaining = MIN_LOADING_MS - elapsed;
-
-      if (remaining > 0) {
-        await sleep(remaining);
-      }
-
       loadingRef.current = false;
       setLoading(false);
     }
-  }, [pageSize]);
+  }, [pageSize, notification]);
 
   const fetchMore = useCallback(async () => {
     if (loadingRef.current) return;
@@ -137,7 +124,7 @@ export const FavoritesProvider = ({
       loadingRef.current = false;
       setIsFetchingMore(false);
     }
-  }, [favorites.length, pageSize, totalItems]);
+  }, [favorites.length, pageSize, totalItems, notification]);
 
   const postFavoriteDataset = useCallback(
     async (dataset: Dataset) => {
@@ -161,7 +148,7 @@ export const FavoritesProvider = ({
         setLoading(false);
       }
     },
-    [loading],
+    [notification],
   );
 
   const deleteUnfavoriteDataset = useCallback(
@@ -185,7 +172,7 @@ export const FavoritesProvider = ({
         setLoading(false);
       }
     },
-    [loading],
+    [notification],
   );
 
   const value = useMemo<FavoritesContextType>(

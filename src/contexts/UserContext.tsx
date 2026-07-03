@@ -1,27 +1,22 @@
 // src/contexts/UserContext.tsx
 import {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useMemo,
-  useState,
   type ReactNode,
 } from "react";
 import { useAuth } from "react-oidc-context";
-import { register as registerApi } from "../api/security";
 import { setApiAccessToken } from "../api/client";
 import type { User } from "../types/user";
 
 interface UserContextType {
-  backendUser: User | null;
+  user: User | null;
+  backendUser: User | null; // Kept as alias for backwards compatibility
   isAuthenticated: boolean;
   isAuthReady: boolean;
   isAdmin: boolean;
   isLoading: boolean;
-  isRegistering: boolean;
-  registrationError: unknown;
-  registerBackendUser: (force?: boolean) => Promise<User | undefined>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -36,144 +31,109 @@ export function useUser(): UserContextType {
   return context;
 }
 
-// Prevent duplicate register calls in React StrictMode/dev.
-let lastRegisterKey: string | null = null;
-let registerPromise: Promise<User> | null = null;
+type KeycloakProfile = {
+  sub?: string;
+  preferred_username?: string;
+  given_name?: string;
+  family_name?: string;
+  email?: string;
+  name?: string;
+  realm_access?: {
+    roles?: string[];
+  };
+  resource_access?: Record<
+    string,
+    {
+      roles?: string[];
+    }
+  >;
+  groups?: string[];
+};
 
-function resetRegisterCache() {
-  lastRegisterKey = null;
-  registerPromise = null;
-}
-
-function registerOnce(registerKey: string): Promise<User> {
-  if (registerPromise && lastRegisterKey === registerKey) {
-    return registerPromise;
+function createUserFromProfile(
+  profile: KeycloakProfile | undefined,
+): User | null {
+  if (!profile?.sub) {
+    return null;
   }
 
-  lastRegisterKey = registerKey;
+  return {
+    id: profile.sub,
+    username: profile.preferred_username ?? "",
+    firstName: profile.given_name ?? "",
+    lastName: profile.family_name ?? "",
+    email: profile.email ?? "",
+  };
+}
 
-  registerPromise = registerApi()
-    .then((user) => user as User)
-    .catch((error) => {
-      if (lastRegisterKey === registerKey) {
-        resetRegisterCache();
-      }
+function hasAdminAccess(profile: KeycloakProfile | undefined): boolean {
+  const realmRoles = profile?.realm_access?.roles ?? [];
 
-      throw error;
-    });
+  const clientRoles = Object.values(profile?.resource_access ?? {}).flatMap(
+    (clientAccess) => clientAccess.roles ?? [],
+  );
 
-  return registerPromise;
+  const groups = profile?.groups ?? [];
+
+  return (
+    realmRoles.includes("admin") ||
+    clientRoles.includes("admin") ||
+    groups.includes("admin") ||
+    groups.includes("/admin") ||
+    groups.some((group) => group.endsWith("/admin"))
+  );
 }
 
 export function UserProvider({ children }: Readonly<{ children: ReactNode }>) {
   const auth = useAuth();
 
-  const [backendUser, setBackendUser] = useState<User | null>(null);
-  const [isRegistering, setIsRegistering] = useState(false);
-  const [registrationError, setRegistrationError] = useState<unknown>(null);
-
   const accessToken = auth.user?.access_token;
-  const userSubject = auth.user?.profile.sub;
-
-  const [isAuthReady, setIsAuthReady] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  const isAdmin = useMemo(() => {
-    const profile = auth.user?.profile as
-      | {
-          realm_access?: {
-            roles?: string[];
-          };
-          groups?: string[];
-        }
-      | undefined;
-
-    const roles = profile?.realm_access?.roles ?? [];
-    const groups = profile?.groups ?? [];
-
-    return roles.includes("admin") || groups.includes("admin");
-  }, [auth.user?.profile]);
-
-  const registerBackendUser = useCallback(
-    async (force = false): Promise<User | undefined> => {
-      if (
-        auth.isLoading ||
-        auth.activeNavigator ||
-        !auth.isAuthenticated ||
-        !accessToken
-      ) {
-        return undefined;
-      }
-
-      const registerKey = userSubject ?? accessToken;
-
-      if (force) {
-        resetRegisterCache();
-      }
-
-      try {
-        setIsRegistering(true);
-        setRegistrationError(null);
-
-        setApiAccessToken(accessToken);
-
-        const registeredUser = await registerOnce(registerKey);
-        setIsAuthenticated(true);
-        setIsAuthReady(true);
-
-        setBackendUser(registeredUser);
-
-        return registeredUser;
-      } catch (error) {
-        console.error("registerBackendUser:", error);
-        setRegistrationError(error);
-        throw error;
-      } finally {
-        setIsRegistering(false);
-      }
-    },
-    [
-      auth.isLoading,
-      auth.activeNavigator,
-      auth.isAuthenticated,
-      accessToken,
-      userSubject,
-    ],
-  );
+  const profile = auth.user?.profile as KeycloakProfile | undefined;
 
   useEffect(() => {
     setApiAccessToken(accessToken);
 
-    if (!accessToken || !auth.isAuthenticated) {
-      setBackendUser(null);
-      setRegistrationError(null);
-      resetRegisterCache();
-      return;
+    return () => {
+      if (!accessToken) {
+        setApiAccessToken(undefined);
+      }
+    };
+  }, [accessToken]);
+
+  const user = useMemo(() => {
+    if (!auth.isAuthenticated) {
+      return null;
     }
 
-    void registerBackendUser();
-  }, [accessToken, auth.isAuthenticated, registerBackendUser]);
+    return createUserFromProfile(profile);
+  }, [auth.isAuthenticated, profile]);
+
+  const isAuthReady = useMemo(() => {
+    return !auth.isLoading && !auth.activeNavigator;
+  }, [auth.isLoading, auth.activeNavigator]);
+
+  const isAuthenticated = useMemo(() => {
+    return isAuthReady && auth.isAuthenticated && !!accessToken && !!user;
+  }, [isAuthReady, auth.isAuthenticated, accessToken, user]);
+
+  const isAdmin = useMemo(() => {
+    if (!isAuthenticated) {
+      return false;
+    }
+
+    return hasAdminAccess(profile);
+  }, [isAuthenticated, profile]);
 
   const value = useMemo<UserContextType>(
     () => ({
-      backendUser,
-      isAuthenticated: isAuthenticated,
-      isAuthReady: isAuthReady,
-      isLoading: auth.isLoading,
-      isRegistering,
-      registrationError,
-      registerBackendUser,
-      isAdmin: isAdmin,
-    }),
-    [
-      backendUser,
-      auth.isAuthenticated,
-      auth.isLoading,
-      isRegistering,
-      registrationError,
-      registerBackendUser,
+      user,
+      backendUser: user,
+      isAuthenticated,
+      isAuthReady,
       isAdmin,
-    ],
+      isLoading: auth.isLoading,
+    }),
+    [user, isAuthenticated, isAuthReady, isAdmin, auth.isLoading],
   );
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;

@@ -151,7 +151,15 @@ export default function Browse() {
           isLoading || metadata.name === "" || metadata.displayName === ""
         }
         onClose={() => setUploadDialogOpen(false)}
-        onUpload={(file) => createDataset(metadata, file)}
+        onUpload={async (file) => {
+          await createDataset(metadata, file);
+          setMetadata({
+            name: "",
+            displayName: "",
+            description: "",
+            isPublic: false,
+          });
+        }}
         title="Create dataset"
         description="Select a file to create a new dataset."
         create={true}
