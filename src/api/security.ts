@@ -1,3 +1,4 @@
+import type { GroupWithAccess, UserWithAccess } from "../types/access";
 import type { Group } from "../types/groups";
 import type { Pagination } from "../types/pagination";
 import type { User } from "../types/user";
@@ -89,6 +90,46 @@ export async function updatePermissions(
   }
 
   return data;
+}
+
+export async function deleteUserPermissions(id: string, datasetId: string) {
+  const { data, error } = await api.DELETE(
+    "/api/security/{id}/dataset/{dataset_id}",
+    {
+      params: {
+        path: {
+          id: id,
+          dataset_id: datasetId,
+        },
+      },
+    },
+  );
+
+  if (error) {
+    console.error("API error:", error);
+    throw error;
+  }
+
+  return data;
+}
+
+export async function getUsersWithAccess(
+  datasetId: string,
+): Promise<UserWithAccess[]> {
+  const { data, error } = await api.GET("/api/security/users/dataset/{id}", {
+    params: {
+      path: {
+        id: datasetId,
+      },
+    },
+  });
+
+  if (!data || error) {
+    console.error("API error:", error);
+    throw error;
+  }
+
+  return data as UserWithAccess[];
 }
 
 // GROUPS
@@ -215,4 +256,44 @@ export async function updateGroupPermissions(
   }
 
   return data;
+}
+
+export async function deleteGroupPermissions(id: string, datasetId: string) {
+  const { data, error } = await api.DELETE(
+    "/api/security/groups/{id}/dataset/{dataset_id}",
+    {
+      params: {
+        path: {
+          id: id,
+          dataset_id: datasetId,
+        },
+      },
+    },
+  );
+
+  if (error) {
+    console.error("API error:", error);
+    throw error;
+  }
+
+  return data;
+}
+
+export async function getGroupsWithAccess(
+  datasetId: string,
+): Promise<GroupWithAccess[]> {
+  const { data, error } = await api.GET("/api/security/groups/dataset/{id}", {
+    params: {
+      path: {
+        id: datasetId,
+      },
+    },
+  });
+
+  if (!data || error) {
+    console.error("API error:", error);
+    throw error;
+  }
+
+  return data as GroupWithAccess[];
 }

@@ -4,6 +4,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useState,
   type ReactNode,
 } from "react";
 import { useAuth } from "react-oidc-context";
@@ -12,7 +13,7 @@ import type { User } from "../types/user";
 
 interface UserContextType {
   user: User | null;
-  backendUser: User | null; // Kept as alias for backwards compatibility
+  backendUser: User | null;
   isAuthenticated: boolean;
   isAuthReady: boolean;
   isAdmin: boolean;
@@ -87,18 +88,32 @@ function hasAdminAccess(profile: KeycloakProfile | undefined): boolean {
 export function UserProvider({ children }: Readonly<{ children: ReactNode }>) {
   const auth = useAuth();
 
+  const [isApiTokenReady, setIsApiTokenReady] = useState(false);
+
   const accessToken = auth.user?.access_token;
   const profile = auth.user?.profile as KeycloakProfile | undefined;
 
   useEffect(() => {
+    if (auth.isLoading || auth.activeNavigator) {
+      setApiAccessToken(undefined);
+      setIsApiTokenReady(false);
+      return;
+    }
+
+    if (!auth.isAuthenticated || !accessToken) {
+      setApiAccessToken(undefined);
+      setIsApiTokenReady(false);
+      return;
+    }
+
     setApiAccessToken(accessToken);
+    setIsApiTokenReady(true);
 
     return () => {
-      if (!accessToken) {
-        setApiAccessToken(undefined);
-      }
+      setApiAccessToken(undefined);
+      setIsApiTokenReady(false);
     };
-  }, [accessToken]);
+  }, [auth.isLoading, auth.activeNavigator, auth.isAuthenticated, accessToken]);
 
   const user = useMemo(() => {
     if (!auth.isAuthenticated) {
@@ -109,12 +124,24 @@ export function UserProvider({ children }: Readonly<{ children: ReactNode }>) {
   }, [auth.isAuthenticated, profile]);
 
   const isAuthReady = useMemo(() => {
-    return !auth.isLoading && !auth.activeNavigator;
-  }, [auth.isLoading, auth.activeNavigator]);
+    return (
+      !auth.isLoading &&
+      !auth.activeNavigator &&
+      auth.isAuthenticated &&
+      !!accessToken &&
+      isApiTokenReady
+    );
+  }, [
+    auth.isLoading,
+    auth.activeNavigator,
+    auth.isAuthenticated,
+    accessToken,
+    isApiTokenReady,
+  ]);
 
   const isAuthenticated = useMemo(() => {
-    return isAuthReady && auth.isAuthenticated && !!accessToken && !!user;
-  }, [isAuthReady, auth.isAuthenticated, accessToken, user]);
+    return isAuthReady && !!user;
+  }, [isAuthReady, user]);
 
   const isAdmin = useMemo(() => {
     if (!isAuthenticated) {
@@ -131,7 +158,7 @@ export function UserProvider({ children }: Readonly<{ children: ReactNode }>) {
       isAuthenticated,
       isAuthReady,
       isAdmin,
-      isLoading: auth.isLoading,
+      isLoading: auth.isLoading || !isAuthReady,
     }),
     [user, isAuthenticated, isAuthReady, isAdmin, auth.isLoading],
   );

@@ -6,7 +6,6 @@ import Browse from "./pages/Browse";
 import Dataset from "./pages/Dataset";
 import Favorites from "./pages/Favorites";
 import Credentials from "./pages/Credentials";
-import Admin from "./pages/Admin";
 import Groups from "./pages/Groups";
 
 export const routes: RouteObject[] = [
@@ -21,7 +20,6 @@ export const routes: RouteObject[] = [
       { path: "favorites", element: <Favorites /> },
       { path: "keys", element: <Credentials /> },
       { path: "groups", element: <Groups /> },
-      { path: "admin", element: <Admin /> },
 
       { path: "*", element: <NotFound /> },
     ],

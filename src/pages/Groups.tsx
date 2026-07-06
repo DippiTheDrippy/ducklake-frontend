@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect } from "react";
-import GroupMembersCard from "../components/groups/GroupMembersCard";
+import GroupMembersRow from "../components/groups/GroupMembersRow";
 import { useGroups } from "../contexts/GroupsContext";
 
 export default function Groups() {
@@ -89,7 +89,7 @@ export default function Groups() {
         ) : (
           <Stack spacing={2}>
             {groups.map((group) => (
-              <GroupMembersCard
+              <GroupMembersRow
                 key={group.id}
                 group={group}
                 members={members[group.id]}

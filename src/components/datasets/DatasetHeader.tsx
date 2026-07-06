@@ -4,6 +4,7 @@ import {
   Favorite,
   FavoriteBorder,
   Key,
+  PersonAdd,
   UploadFileOutlined,
 } from "@mui/icons-material";
 import type { Dataset as DatasetInfo } from "../../types/dataset";
@@ -16,6 +17,7 @@ interface DatasetHeaderProps {
   onDelete: () => void;
   onUpload?: () => void;
   onCreateCredentials?: () => void;
+  onAccess?: () => void;
 }
 
 export default function DatasetHeader({
@@ -25,6 +27,7 @@ export default function DatasetHeader({
   onDelete,
   onUpload,
   onCreateCredentials,
+  onAccess,
 }: Readonly<DatasetHeaderProps>) {
   const { isFavorite, favoriteDataset, unfavoriteDataset } = useFavorites();
   const isFavorited = isFavorite(dataset.id);
@@ -92,15 +95,79 @@ export default function DatasetHeader({
         </Typography>
       </Box>
 
-      {isAdmin && (
+      <Box
+        sx={{
+          display: "flex",
+          gap: 4,
+          flexShrink: 0,
+          flexWrap: "wrap",
+          justifyContent: { xs: "flex-start", md: "flex-end" },
+          width: { xs: "100%", md: "auto" },
+        }}
+      >
+        {isAdmin && (
+          <Box
+            sx={{
+              display: "inline-flex",
+              gap: 1,
+              outline: (theme) => `2px solid ${theme.palette.divider}`,
+              outlineOffset: "8px",
+              borderRadius: 1,
+            }}
+          >
+            <Button
+              aria-label="Delete dataset"
+              color="error"
+              disabled={isLoading}
+              onClick={onDelete}
+              size="small"
+              sx={{
+                backgroundColor: "error.main",
+                color: "error.contrastText",
+                width: "3rem",
+              }}
+            >
+              <DeleteForeverOutlined fontSize="medium" />
+            </Button>
+
+            <Button
+              aria-label="Upload file"
+              color="success"
+              disabled={isLoading}
+              onClick={onUpload}
+              size="small"
+              sx={{
+                backgroundColor: "success.main",
+                color: "success.contrastText",
+                width: "3rem",
+              }}
+            >
+              <UploadFileOutlined fontSize="medium" />
+            </Button>
+
+            <Button
+              aria-label="Grant Access"
+              color="success"
+              disabled={isLoading}
+              onClick={onAccess}
+              size="small"
+              sx={{
+                backgroundColor: "success.main",
+                color: "success.contrastText",
+                width: "3rem",
+              }}
+            >
+              <PersonAdd fontSize="medium" />
+            </Button>
+          </Box>
+        )}
         <Box
           sx={{
-            display: "flex",
+            display: "inline-flex",
             gap: 1,
-            flexShrink: 0,
-            flexWrap: "wrap",
-            justifyContent: { xs: "flex-start", md: "flex-end" },
-            width: { xs: "100%", md: "auto" },
+            outline: (theme) => `2px solid ${theme.palette.divider}`,
+            outlineOffset: "8px",
+            borderRadius: 1,
           }}
         >
           <Button
@@ -117,42 +184,11 @@ export default function DatasetHeader({
           >
             <Key fontSize="medium" />
           </Button>
-
           <Button
-            aria-label="Delete dataset"
-            color="error"
-            disabled={isLoading}
-            onClick={onDelete}
-            size="small"
-            sx={{
-              backgroundColor: "error.main",
-              color: "error.contrastText",
-              width: "3rem",
-            }}
-          >
-            <DeleteForeverOutlined fontSize="medium" />
-          </Button>
-
-          <Button
-            aria-label="Upload file"
-            color="success"
-            disabled={isLoading}
-            onClick={onUpload}
-            size="small"
-            sx={{
-              backgroundColor: "success.main",
-              color: "success.contrastText",
-              width: "3rem",
-            }}
-          >
-            <UploadFileOutlined fontSize="medium" />
-          </Button>
-
-          <IconButton
             aria-label={
               isFavorited ? "Remove from favorites" : "Add to favorites"
             }
-            color="primary"
+            color="error"
             disabled={isLoading}
             onClick={
               isFavorited
@@ -160,15 +196,19 @@ export default function DatasetHeader({
                 : () => favoriteDataset(dataset)
             }
             size="medium"
+            sx={{
+              color: "error.main",
+              width: "3rem",
+            }}
           >
             {isFavorited ? (
               <Favorite fontSize="medium" />
             ) : (
               <FavoriteBorder fontSize="medium" />
             )}
-          </IconButton>
+          </Button>
         </Box>
-      )}
+      </Box>
     </Box>
   );
 }

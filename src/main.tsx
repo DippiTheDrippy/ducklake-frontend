@@ -12,6 +12,7 @@ import { FavoritesProvider } from "./contexts/FavoritesContext.tsx";
 import { CredentialsProvider } from "./contexts/CredentialsContext.tsx";
 import { NotificationProvider } from "./contexts/NotificationContext.tsx";
 import { GroupsProvider } from "./contexts/GroupsContext.tsx";
+import { AccessProvider } from "./contexts/AccessContext.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -25,7 +26,9 @@ createRoot(document.getElementById("root")!).render(
                   <FavoritesProvider>
                     <CredentialsProvider>
                       <GroupsProvider>
-                        <App />
+                        <AccessProvider>
+                          <App />
+                        </AccessProvider>
                       </GroupsProvider>
                     </CredentialsProvider>
                   </FavoritesProvider>

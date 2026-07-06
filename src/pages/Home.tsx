@@ -26,9 +26,13 @@ const shortcuts = [
   },
   {
     title: "Access keys",
-    description:
-      "Create keys that give you direct access to the DuckLake catalog behind the dataset.",
+    description: "Create keys that give you direct access to the dataset.",
     href: "/keys",
+  },
+  {
+    title: "My groups",
+    description: "View what groups you are currently a member of.",
+    href: "/groups",
   },
 ];
 
@@ -81,42 +85,6 @@ export default function Home() {
                 school on our cloud. It helps you browse datasets, save useful
                 resources, and access data for coursework and projects.
               </Typography>
-
-              <Stack
-                direction={{ xs: "column", sm: "row" }}
-                spacing={2}
-                sx={{ mt: 4, justifyContent: "center" }}
-              >
-                <Button
-                  component={RouterLink}
-                  to="/browse"
-                  variant="contained"
-                  size="large"
-                  sx={{
-                    borderRadius: 999,
-                    px: 3,
-                    fontWeight: 700,
-                    textTransform: "none",
-                  }}
-                >
-                  Browse datasets
-                </Button>
-
-                <Button
-                  component={RouterLink}
-                  to="/keys"
-                  variant="outlined"
-                  size="large"
-                  sx={{
-                    borderRadius: 999,
-                    px: 3,
-                    fontWeight: 700,
-                    textTransform: "none",
-                  }}
-                >
-                  Manage access keys
-                </Button>
-              </Stack>
             </Box>
 
             <Box
@@ -124,7 +92,7 @@ export default function Home() {
                 display: "grid",
                 gridTemplateColumns: {
                   xs: "1fr",
-                  md: "repeat(3, 1fr)",
+                  md: "repeat(4, 1fr)",
                 },
                 gap: 2,
               }}

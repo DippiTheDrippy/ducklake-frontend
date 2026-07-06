@@ -24,7 +24,7 @@ export default function Header() {
   const muiTheme = useMuiTheme();
   const { isDark, toggleTheme } = useTheme();
   const auth = useAuth();
-  const { isAdmin, backendUser } = useUser();
+  const { backendUser } = useUser();
   const location = useLocation();
 
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -55,7 +55,6 @@ export default function Header() {
     { label: "Favorites", path: "/favorites" },
     { label: "My Keys", path: "/keys" },
     { label: "My Groups", path: "/groups" },
-    ...(isAdmin ? [{ label: "Admin", path: "/admin", admin: true }] : []),
   ];
 
   const getNavButtonSx = (isActive: boolean, admin?: boolean) => ({
@@ -158,7 +157,7 @@ export default function Header() {
               end={false}
               color="inherit"
               size="small"
-              sx={getNavButtonSx(isActiveRoute(item.path), item.admin)}
+              sx={getNavButtonSx(isActiveRoute(item.path))}
             >
               {item.label}
             </Button>
@@ -311,11 +310,7 @@ export default function Header() {
                   sx={{
                     borderRadius: 2,
                     my: 0.5,
-                    color: item.admin
-                      ? "warning.main"
-                      : isActive
-                        ? "text.primary"
-                        : "text.secondary",
+                    color: isActive ? "text.primary" : "text.secondary",
                     backgroundColor: isActive
                       ? alpha(
                           muiTheme.palette.mode === "dark"
@@ -329,7 +324,7 @@ export default function Header() {
                   <ListItemText
                     primary={
                       <Typography
-                        sx={{ fontWeight: isActive || item.admin ? 700 : 500 }}
+                        sx={{ fontWeight: isActive ? 700 : 500 }}
                         noWrap
                       >
                         {item.label}

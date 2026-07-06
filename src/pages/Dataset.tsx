@@ -24,6 +24,8 @@ import { useCredentials } from "../contexts/CredentialsContext";
 import dayjs, { Dayjs } from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers";
 import { buildDuckLakeConnectionString } from "../utils/credentialHelpers";
+import DatasetAccessDialog from "../components/datasets/access/DatasetAccessDialog";
+// import DatasetAccessDialog from "../components/datasets/access/DatasetAccessDialog";
 
 export default function Dataset() {
   const { id } = useParams<{ id: string }>();
@@ -42,6 +44,8 @@ export default function Dataset() {
     expiresAt: null as null | Dayjs,
     neverExpires: true,
   });
+
+  const [accessDialogOpen, setAccessDialogOpen] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -97,6 +101,7 @@ export default function Dataset() {
           onDelete={() => setDeleteDialogOpen(true)}
           onUpload={() => setUploadDialogOpen(true)}
           onCreateCredentials={() => setCredentialDialogOpen(true)}
+          onAccess={() => setAccessDialogOpen(true)}
         />
 
         <DatasetMetadata dataset={info} columnCount={summary.length} />
@@ -271,6 +276,15 @@ export default function Dataset() {
           </Typography>
         </Box>
       </SimpleDialog>
+
+      {dataset && (
+        <DatasetAccessDialog
+          open={accessDialogOpen}
+          datasetId={dataset.dataset.id}
+          datasetName={dataset.dataset.name}
+          onClose={() => setAccessDialogOpen(false)}
+        />
+      )}
     </Container>
   );
 }

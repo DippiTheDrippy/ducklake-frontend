@@ -8,6 +8,10 @@ export function setApiAccessToken(token: string | undefined) {
   accessToken = token;
 }
 
+export function hasApiAccessToken(): boolean {
+  return Boolean(accessToken);
+}
+
 const authMiddleware: Middleware = {
   async onRequest({ request }) {
     if (accessToken) {
