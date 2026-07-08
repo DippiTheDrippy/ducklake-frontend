@@ -14,6 +14,7 @@ import {
 } from "../api/dataset";
 import type { Pagination } from "../types/pagination";
 import { useNotification } from "./NotificationContext";
+import type { Err } from "../types/error";
 
 interface FavoritesContextType {
   favorites: Dataset[];
@@ -140,8 +141,7 @@ export const FavoritesProvider = ({
       } catch (err) {
         console.error("createDataset: " + err);
         notification.error(
-          "Failed to favorite dataset: " +
-            (err instanceof Error ? err.message : String(err)),
+          "Failed to favorite dataset: " + (err as Err).message,
         );
       } finally {
         loadingRef.current = false;
@@ -164,8 +164,7 @@ export const FavoritesProvider = ({
       } catch (err) {
         console.error("deleteDataset: " + err);
         notification.error(
-          "Failed to unfavorite dataset: " +
-            (err instanceof Error ? err.message : String(err)),
+          "Failed to unfavorite dataset: " + (err as Err).message,
         );
       } finally {
         loadingRef.current = false;

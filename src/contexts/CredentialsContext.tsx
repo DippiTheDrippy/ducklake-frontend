@@ -17,6 +17,7 @@ import type { Pagination } from "../types/pagination";
 import type { Dayjs } from "dayjs";
 import type { Credential } from "../types/credentials";
 import { useNotification } from "./NotificationContext";
+import type { Err } from "../types/error";
 
 interface CredentialsContextType {
   credentials: Credential[];
@@ -204,8 +205,7 @@ export const CredentialsProvider = ({
         setCredential(null);
         console.error("createCredentials: " + err);
         notification.error(
-          "Failed to create credentials: " +
-            (err instanceof Error ? err.message : String(err)),
+          "Failed to create credentials: " + (err as Err).message,
         );
       } finally {
         loadingRef.current = false;
@@ -236,8 +236,7 @@ export const CredentialsProvider = ({
         setCredential(null);
         console.error("rotateCredentials: " + err);
         notification.error(
-          "Failed to rotate credentials: " +
-            (err instanceof Error ? err.message : String(err)),
+          "Failed to rotate credentials: " + (err as Err).message,
         );
       } finally {
         loadingRef.current = false;
@@ -263,8 +262,7 @@ export const CredentialsProvider = ({
       } catch (err) {
         console.error("deleteCredential: " + err);
         notification.error(
-          "Failed to delete credential: " +
-            (err instanceof Error ? err.message : String(err)),
+          "Failed to delete credential: " + (err as Err).message,
         );
         return false;
       } finally {

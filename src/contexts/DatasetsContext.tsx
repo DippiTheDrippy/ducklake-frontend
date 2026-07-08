@@ -16,6 +16,7 @@ import {
   updateDataset,
 } from "../api/admin";
 import { useNotification } from "./NotificationContext";
+import type { Err } from "../types/error";
 
 interface DatasetsContextType {
   dataset: DatasetWithSummary | null;
@@ -205,10 +206,7 @@ export const DatasetsProvider = ({
         );
       } catch (err) {
         console.error("updateDataset: " + err);
-        notification.error(
-          "Failed to update dataset: " +
-            (err instanceof Error ? err.message : String(err)),
-        );
+        notification.error("Failed to update dataset: " + (err as Err).message);
       } finally {
         loadingRef.current = false;
         setLoading(false);
@@ -237,10 +235,7 @@ export const DatasetsProvider = ({
         setTotalItems((prev) => prev + 1);
       } catch (err) {
         console.error("createDataset: " + err);
-        notification.error(
-          "Failed to create dataset: " +
-            (err instanceof Error ? err.message : String(err)),
-        );
+        notification.error("Failed to create dataset: " + (err as Err).message);
       } finally {
         loadingRef.current = false;
         setLoading(false);
@@ -260,8 +255,7 @@ export const DatasetsProvider = ({
       } catch (err) {
         console.error("uploadDatasetFile: " + err);
         notification.error(
-          "Failed to upload file to dataset: " +
-            (err instanceof Error ? err.message : String(err)),
+          "Failed to upload file to dataset: " + (err as Err).message,
         );
       } finally {
         loadingRef.current = false;
@@ -284,10 +278,7 @@ export const DatasetsProvider = ({
         return true;
       } catch (err) {
         console.error("deleteDataset: " + err);
-        notification.error(
-          "Failed to delete dataset: " +
-            (err instanceof Error ? err.message : String(err)),
-        );
+        notification.error("Failed to delete dataset: " + (err as Err).message);
         return false;
       } finally {
         loadingRef.current = false;
