@@ -20,15 +20,18 @@ import type {
 import { useNotification } from "./NotificationContext";
 
 import {
-  deleteGroupPermissions,
-  deleteUserPermissions,
-  getGroupsWithAccess as apiGetGroupsWithAccess,
   getUsersWithAccess as apiGetUsersWithAccess,
-  searchGroups as apiSearchGroups,
   searchUsers as apiSearchUsers,
-  updateGroupPermissions,
+  deleteUserPermissions,
   updatePermissions,
-} from "../api/security";
+} from "../api/users";
+
+import {
+  deleteGroupPermissions,
+  getGroupsWithAccess as apiGetGroupsWithAccess,
+  searchGroups as apiSearchGroups,
+  updateGroupPermissions,
+} from "../api/groups";
 
 interface AccessContextType {
   usersWithAccess: UserWithAccess[];

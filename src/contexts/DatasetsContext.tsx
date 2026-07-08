@@ -7,14 +7,16 @@ import {
   useState,
 } from "react";
 import type { Dataset, DatasetWithSummary } from "../types/dataset";
-import { getDataset, listDatasets, searchDatasets } from "../api/dataset";
 import type { Pagination } from "../types/pagination";
 import {
   appendDataFromFile,
   createDatasetFromFile,
   deleteDataset,
   updateDataset,
-} from "../api/admin";
+  getDataset,
+  listDatasets,
+  searchDatasets,
+} from "../api/dataset";
 import { useNotification } from "./NotificationContext";
 import type { Err } from "../types/error";
 

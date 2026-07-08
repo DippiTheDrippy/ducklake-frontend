@@ -67,18 +67,35 @@ export async function searchDatasets(
   return data as Pagination<Dataset>;
 }
 
-// FAVORTIES
+// ADMIN
 
-export async function listFavorites(
-  pageIndex: number,
-  pageSize: number,
-): Promise<Pagination<Dataset>> {
-  const { data, error } = await api.GET("/api/datasets/favorite", {
-    params: {
-      query: {
-        pageIndex: pageIndex,
-        pageSize: pageSize,
-      },
+export async function createDatasetFromFile(
+  metadata: {
+    name: string;
+    displayName: string;
+    description: string;
+    isPublic: boolean;
+  },
+  file: File,
+): Promise<Dataset> {
+  const { data, error } = await api.POST("/api/datasets", {
+    body: {
+      metadata,
+      file: file as unknown as string,
+    },
+    bodySerializer() {
+      const formData = new FormData();
+
+      formData.append(
+        "metadata",
+        new Blob([JSON.stringify(metadata)], {
+          type: "application/json",
+        }),
+      );
+
+      formData.append("file", file, file.name);
+
+      return formData;
     },
   });
 
@@ -87,141 +104,64 @@ export async function listFavorites(
     throw error;
   }
 
-  return data as Pagination<Dataset>;
+  return data as Dataset;
 }
 
-export async function favoriteDataset(id: string) {
-  const { data, error } = await api.POST("/api/datasets/favorite/{id}", {
+export async function appendDataFromFile(id: string, file: File) {
+  const { data, error } = await api.POST("/api/datasets/append/{id}", {
     params: {
       path: {
         id: id,
-      },
-    },
-  });
-
-  if (error) {
-    console.error("API error:", error);
-    throw error;
-  }
-
-  return data;
-}
-
-export async function unfavoriteDataset(id: string) {
-  const { data, error } = await api.DELETE("/api/datasets/favorite/{id}", {
-    params: {
-      path: {
-        id: id,
-      },
-    },
-  });
-
-  if (error) {
-    console.error("API error:", error);
-    throw error;
-  }
-
-  return data;
-}
-
-// CREDENTIALS
-
-export async function listCredentials(
-  pageIndex: number,
-  pageSize: number,
-): Promise<Pagination<Credential>> {
-  const { data, error } = await api.GET("/api/datasets/credentials", {
-    params: {
-      query: {
-        pageIndex: pageIndex,
-        pageSize: pageSize,
-      },
-    },
-  });
-
-  if (!data || error) {
-    console.error("API error:", error);
-    throw error;
-  }
-
-  return data as Pagination<Credential>;
-}
-
-export async function getDatasetCredential(
-  datasetId: string,
-): Promise<Credential> {
-  const { data, error } = await api.GET("/api/datasets/{id}/credentials", {
-    params: {
-      path: {
-        id: datasetId,
-      },
-    },
-  });
-
-  if (error) {
-    console.error("API error:", error);
-    throw error;
-  }
-
-  return data as Credential;
-}
-
-export async function createDatasetCredential(
-  datasetId: string,
-  name: string,
-  accessLevel: "READ" | "WRITE",
-  expiresAt: Dayjs | null,
-  neverExpires: boolean,
-): Promise<Credential> {
-  const { data, error } = await api.POST("/api/datasets/{id}/credentials", {
-    params: {
-      path: {
-        id: datasetId,
       },
     },
     body: {
-      name: name,
-      access: accessLevel,
-      expiresAt: expiresAt ? expiresAt.toISOString() : undefined,
-      neverExpires: neverExpires,
+      file: file as unknown as string,
+    },
+    bodySerializer() {
+      const formData = new FormData();
+      formData.append("file", file, file.name);
+      return formData;
     },
   });
 
-  if (!data || error) {
-    console.error("API error:", error);
-    throw new Error(error);
-  }
-
-  return data as Credential;
-}
-
-export async function rotateDatasetCredential(
-  credentialId: string,
-): Promise<Credential> {
-  const { data, error } = await api.POST(
-    "/api/datasets/credentials/{id}/rotate",
-    {
-      params: {
-        path: {
-          id: credentialId,
-        },
-      },
-    },
-  );
-
-  if (!data || error) {
+  if (error) {
     console.error("API error:", error);
     throw error;
   }
 
-  return data as Credential;
+  return data;
 }
 
-export async function deleteCredential(credentialId: string) {
-  const { data, error } = await api.DELETE("/api/datasets/credentials/{id}", {
+export async function updateDataset(
+  id: string,
+  body: {
+    displayName: string;
+    description: string;
+    isPublic: boolean;
+  },
+) {
+  const { data, error } = await api.PUT("/api/datasets/{id}", {
     params: {
       path: {
-        id: credentialId,
+        id: id,
+      },
+    },
+    body,
+  });
+
+  if (error) {
+    console.error("API error:", error);
+    throw error;
+  }
+
+  return data;
+}
+
+export async function deleteDataset(id: string) {
+  const { data, error } = await api.DELETE("/api/datasets/{id}", {
+    params: {
+      path: {
+        id: id,
       },
     },
   });

@@ -10,7 +10,7 @@ import type { Pagination } from "../types/pagination";
 import type { Group } from "../types/groups";
 import { useNotification } from "./NotificationContext";
 import type { User } from "../types/user";
-import { getGroupMembers, listMyGroups } from "../api/security";
+import { getGroupMembers, listMyGroups } from "../api/groups";
 
 interface GroupsContextType {
   groups: Group[];

@@ -6,18 +6,18 @@ import {
   useRef,
   useState,
 } from "react";
-import {
-  createDatasetCredential,
-  deleteCredential,
-  getDatasetCredential,
-  listCredentials,
-  rotateDatasetCredential,
-} from "../api/dataset";
 import type { Pagination } from "../types/pagination";
 import type { Dayjs } from "dayjs";
 import type { Credential } from "../types/credentials";
 import { useNotification } from "./NotificationContext";
 import type { Err } from "../types/error";
+import {
+  getDatasetCredential,
+  listCredentials,
+  createDatasetCredential,
+  rotateDatasetCredential,
+  deleteCredential,
+} from "../api/credentials";
 
 interface CredentialsContextType {
   credentials: Credential[];

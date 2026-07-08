@@ -11,7 +11,7 @@ import {
   favoriteDataset,
   listFavorites,
   unfavoriteDataset,
-} from "../api/dataset";
+} from "../api/favorites";
 import type { Pagination } from "../types/pagination";
 import { useNotification } from "./NotificationContext";
 import type { Err } from "../types/error";

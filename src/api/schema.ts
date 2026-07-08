@@ -4,36 +4,127 @@
  */
 
 export interface paths {
-    "/api/admin/datasets": {
+    "/api/credentials": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get?: never;
-        put?: never;
-        /** Create Empty Dataset */
-        post: {
+        /** List My Credentials */
+        get: {
             parameters: {
-                query?: never;
+                query?: {
+                    pageIndex?: number;
+                    pageSize?: number;
+                };
                 header?: never;
                 path?: never;
                 cookie?: never;
             };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["CreateDatasetRequest"];
-                };
-            };
+            requestBody?: never;
             responses: {
-                /** @description OK */
+                /** @description List credentials */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": unknown;
+                        "application/json": components["schemas"]["ListDatasetsResponse"];
+                    };
+                };
+                /** @description Not Authorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not Allowed */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/credentials/dataset/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Dataset Credential */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Get dataset credential */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Credential"];
+                    };
+                };
+                /** @description Not Authorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not Allowed */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        /** Create Dataset Credentials */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateCredentialRequest"];
+                };
+            };
+            responses: {
+                /** @description Successfully created credentials */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreateCredentialResponse"];
                     };
                 };
                 /** @description Bad Request */
@@ -65,7 +156,202 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/admin/datasets/append/{id}": {
+    "/api/credentials/dateset/{id}/rotate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Rotate Dataset Credentials */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successfully rotated credentials */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreateCredentialResponse"];
+                    };
+                };
+                /** @description Not Authorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not Allowed */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/credentials/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Credentials */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": unknown;
+                    };
+                };
+                /** @description Not Authorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not Allowed */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/datasets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Datasets */
+        get: {
+            parameters: {
+                query?: {
+                    pageIndex?: number;
+                    pageSize?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description List accessible datasets */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ListDatasetsResponse"];
+                    };
+                };
+                /** @description Not Authorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not Allowed */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        /** Create Dataset From File */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "multipart/form-data": components["schemas"]["CreateDatasetMultipartRequest"];
+                };
+            };
+            responses: {
+                /** @description Successfully created dataset */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Dataset"];
+                    };
+                };
+                /** @description Not Authorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not Allowed */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/datasets/append/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -124,36 +410,34 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/admin/datasets/file": {
+    "/api/datasets/search": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get?: never;
-        put?: never;
-        /** Create Dataset From File */
-        post: {
+        /** Search Datasets */
+        get: {
             parameters: {
-                query?: never;
+                query?: {
+                    pageIndex?: number;
+                    pageSize?: number;
+                    search?: string;
+                };
                 header?: never;
                 path?: never;
                 cookie?: never;
             };
-            requestBody: {
-                content: {
-                    "multipart/form-data": components["schemas"]["CreateDatasetMultipartRequest"];
-                };
-            };
+            requestBody?: never;
             responses: {
-                /** @description OK */
+                /** @description Search datasets by name, display name, or description */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": unknown;
+                        "application/json": components["schemas"]["ListDatasetsResponse"];
                     };
                 };
                 /** @description Not Authorized */
@@ -172,20 +456,58 @@ export interface paths {
                 };
             };
         };
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/admin/datasets/{id}": {
+    "/api/datasets/{id}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** Get Dataset */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Get dataset */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["DatasetWithSummary"];
+                    };
+                };
+                /** @description Not Authorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not Allowed */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
         /** Update Dataset */
         put: {
             parameters: {
@@ -277,217 +599,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/datasets": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List Datasets */
-        get: {
-            parameters: {
-                query?: {
-                    pageIndex?: number;
-                    pageSize?: number;
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": unknown;
-                    };
-                };
-                /** @description Not Authorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Allowed */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/datasets/credentials": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List My Credentials */
-        get: {
-            parameters: {
-                query?: {
-                    pageIndex?: number;
-                    pageSize?: number;
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": unknown;
-                    };
-                };
-                /** @description Not Authorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Allowed */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/datasets/credentials/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** Delete Credentials */
-        delete: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": unknown;
-                    };
-                };
-                /** @description Not Authorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Allowed */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
-        };
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/datasets/credentials/{id}/rotate": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Rotate Dataset Credentials */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": unknown;
-                    };
-                };
-                /** @description Not Authorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Allowed */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/datasets/favorite": {
+    "/api/favorites": {
         parameters: {
             query?: never;
             header?: never;
@@ -507,13 +619,13 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
-                /** @description OK */
+                /** @description List favortied datasets */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": unknown;
+                        "application/json": components["schemas"]["ListDatasetsResponse"];
                     };
                 };
                 /** @description Not Authorized */
@@ -540,7 +652,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/datasets/favorite/{id}": {
+    "/api/favorites/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -628,265 +740,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/datasets/search": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Search Datasets */
-        get: {
-            parameters: {
-                query?: {
-                    pageIndex?: number;
-                    pageSize?: number;
-                    search?: string;
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": unknown;
-                    };
-                };
-                /** @description Not Authorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Allowed */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/datasets/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get Dataset */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": unknown;
-                    };
-                };
-                /** @description Not Authorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Allowed */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/datasets/{id}/credentials": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get Dataset Credential */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": unknown;
-                    };
-                };
-                /** @description Not Authorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Allowed */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
-        };
-        put?: never;
-        /** Create Dataset Credentials */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["CreateCredentialRequest"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": unknown;
-                    };
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Authorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Allowed */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/security": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List Users */
-        get: {
-            parameters: {
-                query?: {
-                    pageIndex?: number;
-                    pageSize?: number;
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": unknown;
-                    };
-                };
-                /** @description Not Authorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Allowed */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/security/groups": {
+    "/api/groups": {
         parameters: {
             query?: never;
             header?: never;
@@ -906,13 +760,13 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
-                /** @description OK */
+                /** @description List groups */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": unknown;
+                        "application/json": components["schemas"]["ListGroupsResponse"];
                     };
                 };
                 /** @description Not Authorized */
@@ -939,7 +793,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/security/groups/dataset/{id}": {
+    "/api/groups/dataset/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -958,13 +812,13 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
-                /** @description OK */
+                /** @description List groups with access to dataset */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": unknown;
+                        "application/json": components["schemas"]["GroupWithAccess"][];
                     };
                 };
                 /** @description Not Authorized */
@@ -991,7 +845,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/security/groups/me": {
+    "/api/groups/me": {
         parameters: {
             query?: never;
             header?: never;
@@ -1011,13 +865,13 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
-                /** @description OK */
+                /** @description List groups I belong to */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": unknown;
+                        "application/json": components["schemas"]["ListGroupsResponse"];
                     };
                 };
                 /** @description Not Authorized */
@@ -1044,7 +898,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/security/groups/search": {
+    "/api/groups/search": {
         parameters: {
             query?: never;
             header?: never;
@@ -1065,13 +919,13 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
-                /** @description OK */
+                /** @description Search groups */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": unknown;
+                        "application/json": components["schemas"]["ListGroupsResponse"];
                     };
                 };
                 /** @description Not Authorized */
@@ -1098,7 +952,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/security/groups/{id}": {
+    "/api/groups/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -1117,13 +971,13 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
-                /** @description OK */
+                /** @description Get group */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": unknown;
+                        "application/json": components["schemas"]["Group"];
                     };
                 };
                 /** @description Not Authorized */
@@ -1150,7 +1004,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/security/groups/{id}/dataset/{dataset_id}": {
+    "/api/groups/{id}/dataset/{dataset_id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -1251,7 +1105,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/security/groups/{id}/members": {
+    "/api/groups/{id}/members": {
         parameters: {
             query?: never;
             header?: never;
@@ -1270,13 +1124,13 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
-                /** @description OK */
+                /** @description List group members */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": unknown;
+                        "application/json": components["schemas"]["User"][];
                     };
                 };
                 /** @description Not Authorized */
@@ -1303,7 +1157,112 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/security/search": {
+    "/api/users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Users */
+        get: {
+            parameters: {
+                query?: {
+                    pageIndex?: number;
+                    pageSize?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description List users */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ListGroupsResponse"];
+                    };
+                };
+                /** @description Not Authorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not Allowed */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/users/dataset/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Users With Access */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description List users with access to dataset */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UserWithAccess"][];
+                    };
+                };
+                /** @description Not Authorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not Allowed */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/users/search": {
         parameters: {
             query?: never;
             header?: never;
@@ -1324,13 +1283,13 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
-                /** @description OK */
+                /** @description Search users */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": unknown;
+                        "application/json": components["schemas"]["ListGroupsResponse"];
                     };
                 };
                 /** @description Not Authorized */
@@ -1357,59 +1316,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/security/users/dataset/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List Users With Access */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": unknown;
-                    };
-                };
-                /** @description Not Authorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Allowed */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/security/{id}": {
+    "/api/users/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -1428,13 +1335,13 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
-                /** @description OK */
+                /** @description Get user */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": unknown;
+                        "application/json": components["schemas"]["User"];
                     };
                 };
                 /** @description Not Authorized */
@@ -1461,7 +1368,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/security/{id}/dataset/{dataset_id}": {
+    "/api/users/{id}/dataset/{dataset_id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -1574,6 +1481,20 @@ export interface components {
             expiresAt?: components["schemas"]["OffsetDateTime"];
             neverExpires?: boolean;
         };
+        CreateCredentialResponse: {
+            id?: components["schemas"]["UUID"];
+            accessLevel?: components["schemas"]["AccessLevel"];
+            name?: string;
+            datasetId?: components["schemas"]["UUID"];
+            userId?: components["schemas"]["UUID"];
+            database?: string;
+            bucket?: string;
+            postgresUsername?: string;
+            postgresPassword?: string;
+            garageAccessKeyId?: string;
+            garageSecretAccessKey?: string;
+            expiresAt?: components["schemas"]["OffsetDateTime"];
+        };
         CreateDatasetMultipartRequest: {
             metadata?: components["schemas"]["CreateDatasetRequest"];
             /** Format: binary */
@@ -1585,11 +1506,106 @@ export interface components {
             description?: string;
             isPublic?: boolean;
         };
+        Credential: {
+            id?: components["schemas"]["UUID"];
+            datasetId?: components["schemas"]["UUID"];
+            userId?: components["schemas"]["UUID"];
+            name?: string;
+            accessLevel?: string;
+            postgresUsername?: string;
+            postgresPassword?: string;
+            garageAccessKeyId?: string;
+            garageSecretAccessKey?: string;
+            expiresAt?: components["schemas"]["OffsetDateTime"];
+            createdAt?: components["schemas"]["OffsetDateTime"];
+            updatedAt?: components["schemas"]["OffsetDateTime"];
+        };
+        Dataset: {
+            id?: components["schemas"]["UUID"];
+            name?: string;
+            displayName?: string;
+            description?: string;
+            bucketName?: string;
+            isPublic?: boolean;
+            createdAt?: components["schemas"]["OffsetDateTime"];
+            updatedAt?: components["schemas"]["OffsetDateTime"];
+            public?: boolean;
+        };
+        DatasetWithSummary: {
+            dataset?: components["schemas"]["Dataset"];
+            summary?: components["schemas"]["TableSummary"][];
+        };
+        ErrorResponse: {
+            /** @example DATASET_CREATION_FAILED */
+            code?: string;
+            /** @example Could not create DuckLake table from uploaded file */
+            message?: string;
+        };
+        Group: {
+            id?: components["schemas"]["UUID"];
+            name?: string;
+            path?: string;
+            subGroups?: components["schemas"]["Group"][];
+            attributes?: {
+                [key: string]: string[];
+            };
+        };
+        GroupWithAccess: {
+            id?: components["schemas"]["UUID"];
+            name?: string;
+            path?: string;
+            subGroups?: components["schemas"]["Group"][];
+            attributes?: {
+                [key: string]: string[];
+            };
+            accessLevel?: components["schemas"]["AccessLevel"];
+        };
+        ListDatasetsResponse: {
+            items?: components["schemas"]["Dataset"][];
+            /** Format: int32 */
+            pageIndex?: number;
+            /** Format: int32 */
+            pageSize?: number;
+            /** Format: int64 */
+            totalItems?: number;
+            /** Format: int32 */
+            totalPages?: number;
+        };
+        ListGroupsResponse: {
+            items?: components["schemas"]["Group"][];
+            /** Format: int32 */
+            pageIndex?: number;
+            /** Format: int32 */
+            pageSize?: number;
+            /** Format: int64 */
+            totalItems?: number;
+            /** Format: int32 */
+            totalPages?: number;
+        };
         /**
          * Format: date-time
          * @example 2022-03-10T12:15:50-04:00
          */
         OffsetDateTime: string;
+        TableSummary: {
+            columnName?: string;
+            columnType?: string;
+            min?: string;
+            max?: string;
+            /** Format: int64 */
+            approxUnique?: number;
+            avg?: string;
+            std?: string;
+            q25?: string;
+            q50?: string;
+            q75?: string;
+            /** Format: int64 */
+            rowCount?: number;
+            /** Format: float */
+            null_percentage?: number;
+        };
+        /** Format: uuid */
+        UUID: string;
         UpdateDatasetRequest: {
             displayName?: string;
             description?: string;
@@ -1597,6 +1613,31 @@ export interface components {
         };
         UpdatePermissionsRequest: {
             accessLevel: components["schemas"]["AccessLevel"];
+        };
+        User: {
+            id?: string;
+            username?: string;
+            firstName?: string;
+            lastName?: string;
+            email?: string;
+            enabled?: boolean;
+            emailVerified?: boolean;
+            attributes?: {
+                [key: string]: string[];
+            };
+        };
+        UserWithAccess: {
+            id?: string;
+            username?: string;
+            firstName?: string;
+            lastName?: string;
+            email?: string;
+            enabled?: boolean;
+            emailVerified?: boolean;
+            attributes?: {
+                [key: string]: string[];
+            };
+            accessLevel?: components["schemas"]["AccessLevel"];
         };
     };
     responses: never;
