@@ -8,7 +8,7 @@ export interface Credential {
   datasetId: string;
   userId: string;
 
-  dataset?: string;
+  database?: string;
   bucket?: string;
 
   postgresUsername: string;

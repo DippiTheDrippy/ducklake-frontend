@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
+  Alert,
   Box,
+  Button,
   Checkbox,
   Container,
   FormControlLabel,
+  IconButton,
   MenuItem,
   TextField,
   Typography,
@@ -25,17 +28,25 @@ import dayjs, { Dayjs } from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers";
 import { buildDuckLakeConnectionString } from "../utils/credentialHelpers";
 import DatasetAccessDialog from "../components/datasets/access/DatasetAccessDialog";
-// import DatasetAccessDialog from "../components/datasets/access/DatasetAccessDialog";
+import { Check, ContentCopy } from "@mui/icons-material";
 
 export default function Dataset() {
   const { id } = useParams<{ id: string }>();
   const { isAuthReady, isAdmin, isAuthenticated } = useUser();
-  const { credential, createCredentials, resetCredential } = useCredentials();
+  const {
+    credential,
+    createCredentials,
+    resetCredential,
+    getCredential,
+    rotateCredentials,
+  } = useCredentials();
   const { dataset, getDataset, deleteDataset, uploadDatasetFile, isLoading } =
     useDatasets();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   const [credentialDialogOpen, setCredentialDialogOpen] = useState(false);
+  const [rotateCredentialDialogOpen, setRotateCredentialDialogOpen] =
+    useState(false);
   const [showCreatedCredential, setShowCreatedCredential] = useState(false);
   const navigate = useNavigate();
   const [createCred, setCreateCred] = useState({
@@ -46,6 +57,7 @@ export default function Dataset() {
   });
 
   const [accessDialogOpen, setAccessDialogOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -55,6 +67,7 @@ export default function Dataset() {
     if (dataset?.dataset.id !== id) {
       getDataset(id);
     }
+    getCredential(id);
   }, [id, isAuthReady, isAuthenticated, dataset?.dataset.id, getDataset]);
 
   if (!id) {
@@ -75,6 +88,19 @@ export default function Dataset() {
 
     setDeleteDialogOpen(false);
     navigate("/browse");
+  };
+
+  const credentialText = credential
+    ? buildDuckLakeConnectionString(credential)
+    : "";
+
+  const handleCopyCredential = async () => {
+    if (!credentialText) return;
+
+    await navigator.clipboard.writeText(credentialText);
+    setCopied(true);
+
+    setTimeout(() => setCopied(false), 1600);
   };
 
   return (
@@ -100,7 +126,11 @@ export default function Dataset() {
           isLoading={isLoading}
           onDelete={() => setDeleteDialogOpen(true)}
           onUpload={() => setUploadDialogOpen(true)}
-          onCreateCredentials={() => setCredentialDialogOpen(true)}
+          onCreateCredentials={() => {
+            credential
+              ? setRotateCredentialDialogOpen(true)
+              : setCredentialDialogOpen(true);
+          }}
           onAccess={() => setAccessDialogOpen(true)}
         />
 
@@ -148,7 +178,9 @@ export default function Dataset() {
             createCred.expiresAt,
             createCred.neverExpires,
           );
-          setShowCreatedCredential(true);
+          if (credential !== null) {
+            setShowCreatedCredential(true);
+          }
         }}
       >
         <Box
@@ -232,10 +264,26 @@ export default function Dataset() {
         </Box>
       </SimpleDialog>
 
+      <ConfirmDialog
+        open={rotateCredentialDialogOpen && credential !== undefined}
+        title="Rotate credentials?"
+        message="This will renew your credentials. This action cannot be undone."
+        confirmLabel="Rotate"
+        loadingLabel="Rotating..."
+        isLoading={isLoading}
+        onClose={() => setRotateCredentialDialogOpen(false)}
+        onConfirm={async () => {
+          await rotateCredentials(credential!.id);
+          setRotateCredentialDialogOpen(false);
+          setShowCreatedCredential(true);
+        }}
+        color="warning.main"
+      />
+
       <SimpleDialog
         open={showCreatedCredential && credential !== null}
         title="Dataset credentials created"
-        description="The following credentials have been created. Please copy and save them securely, as they will not be shown again."
+        description="Copy and save these credentials securely. They will not be shown again."
         buttonLabel=""
         onClose={() => {
           setShowCreatedCredential(false);
@@ -248,32 +296,111 @@ export default function Dataset() {
           });
         }}
         onComplete={() => {}}
+        maxWidth="md"
+        fullWidth
       >
         <Box
           sx={{
             display: "flex",
             flexDirection: "column",
-            gap: 2,
+            gap: 2.5,
           }}
         >
-          <TextField
-            value={credential ? buildDuckLakeConnectionString(credential) : ""}
-            multiline
-            fullWidth
-            minRows={16}
-            maxRows={32}
-            disabled
-          />
+          <Alert severity="warning" variant="outlined">
+            This script contains database and object storage secrets. Store it
+            securely; it cannot be viewed again after closing this dialog.
+          </Alert>
 
-          <Typography
+          <Box
             sx={{
-              fontSize: "0.8rem",
-              color: "text.secondary",
+              borderRadius: 1,
+              px: 1.5,
+              py: 1.25,
+              border: "1px solid",
+              borderColor: "divider",
             }}
           >
-            Keep this credential safe. It contains database and object storage
-            secrets.
-          </Typography>
+            <Typography
+              variant="body2"
+              sx={{
+                color: "text.secondary",
+              }}
+            >
+              Tip: paste this into a trusted DuckDB session. Do not share it in
+              logs, screenshots, commits, or support tickets.
+            </Typography>
+          </Box>
+
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 2,
+            }}
+          >
+            <Box>
+              <Typography
+                variant="subtitle2"
+                sx={{
+                  fontWeight: 700,
+                }}
+              >
+                DuckLake connection script
+              </Typography>
+
+              <Typography
+                variant="body2"
+                sx={{
+                  color: "text.secondary",
+                  mt: 0.25,
+                }}
+              >
+                Run this from an environment that can reach the catalog Postgres
+                and Garage.
+              </Typography>
+            </Box>
+
+            <IconButton
+              size="small"
+              onClick={handleCopyCredential}
+              disabled={!credentialText}
+              sx={{
+                backgroundColor: "transparent",
+                color: "text.primary",
+              }}
+            >
+              {copied ? (
+                <Check fontSize="medium" />
+              ) : (
+                <ContentCopy fontSize="medium" />
+              )}
+            </IconButton>
+          </Box>
+
+          <TextField
+            value={credentialText}
+            multiline
+            minRows={18}
+            maxRows={40}
+            slotProps={{
+              input: {
+                readOnly: true,
+                sx: {
+                  fontFamily:
+                    '"JetBrains Mono", "Fira Code", "SFMono-Regular", Consolas, monospace',
+                  fontSize: "0.82rem",
+                  lineHeight: 1.6,
+                  color: "text.primary",
+                  borderRadius: 1,
+                  "& textarea": {
+                    whiteSpace: "pre",
+                    overflowX: "auto",
+                  },
+                },
+              },
+            }}
+          />
         </Box>
       </SimpleDialog>
 

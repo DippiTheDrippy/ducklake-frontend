@@ -5,10 +5,12 @@ import {
   FavoriteBorder,
   Key,
   PersonAdd,
+  RotateRight,
   UploadFileOutlined,
 } from "@mui/icons-material";
 import type { Dataset as DatasetInfo } from "../../types/dataset";
 import { useFavorites } from "../../contexts/FavoritesContext";
+import { useCredentials } from "../../contexts/CredentialsContext";
 
 interface DatasetHeaderProps {
   dataset: DatasetInfo;
@@ -30,6 +32,7 @@ export default function DatasetHeader({
   onAccess,
 }: Readonly<DatasetHeaderProps>) {
   const { isFavorite, favoriteDataset, unfavoriteDataset } = useFavorites();
+  const { credential } = useCredentials();
   const isFavorited = isFavorite(dataset.id);
 
   return (
@@ -171,7 +174,7 @@ export default function DatasetHeader({
           }}
         >
           <Button
-            aria-label="Delete dataset"
+            aria-label={credential ? "Rotate credential" : "Create credential"}
             color="warning"
             disabled={isLoading}
             onClick={onCreateCredentials}
@@ -182,7 +185,11 @@ export default function DatasetHeader({
               width: "3rem",
             }}
           >
-            <Key fontSize="medium" />
+            {credential ? (
+              <RotateRight fontSize="medium" />
+            ) : (
+              <Key fontSize="medium" />
+            )}
           </Button>
           <Button
             aria-label={

@@ -12,8 +12,10 @@ type ConfirmDialogProps = {
   title?: string;
   message?: string;
   confirmLabel?: string;
+  loadingLabel?: string;
   cancelLabel?: string;
   isLoading?: boolean;
+  color?: string;
   onConfirm: () => void;
   onClose: () => void;
 };
@@ -23,11 +25,13 @@ export default function ConfirmDialog({
   title = "Are you sure?",
   message = "This action cannot be undone.",
   confirmLabel = "Confirm",
+  loadingLabel = "Deleting...",
   cancelLabel = "Cancel",
   isLoading = false,
+  color = "error.main",
   onConfirm,
   onClose,
-}: ConfirmDialogProps) {
+}: Readonly<ConfirmDialogProps>) {
   return (
     <Dialog
       open={open}
@@ -71,10 +75,10 @@ export default function ConfirmDialog({
           variant="contained"
           size="small"
           sx={{
-            backgroundColor: "error.main",
+            backgroundColor: color,
           }}
         >
-          {isLoading ? "Deleting..." : confirmLabel}
+          {isLoading ? loadingLabel : confirmLabel}
         </Button>
       </DialogActions>
     </Dialog>

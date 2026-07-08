@@ -1,6 +1,10 @@
 import type { Credential } from "../types/credentials";
 
 export function formatDate(value: string) {
+  if (value === null) {
+    return "never";
+  }
+
   const date = new Date(value);
 
   if (Number.isNaN(date.getTime())) {
@@ -15,6 +19,8 @@ export function formatDate(value: string) {
 }
 
 export function isExpired(value: string) {
+  if (value === null) return false;
+
   const date = new Date(value);
 
   if (Number.isNaN(date.getTime())) {
@@ -25,12 +31,10 @@ export function isExpired(value: string) {
 }
 
 export function buildDuckLakeConnectionString(credential: Credential) {
-  const database = credential.dataset ?? credential.datasetId;
-  const bucket = credential.bucket ?? credential.datasetId;
+  if (!credential.database || !credential.bucket) return "";
 
-  return `-- Run this script from a deployment that can reach the catalog Postgres
--- and the Garage S3 endpoint. The hostname '${import.meta.env.VITE_CATALOG_HOST}' is the public endpoint
--- of the Postgres catalog for this dataset.
+  return `-- Run this script from a deployment that can reach the catalog Postgres.
+-- The hostname '${import.meta.env.VITE_CATALOG_HOST}' is the public endpoint of the Postgres catalog for this dataset.
 
 INSTALL ducklake;
 INSTALL postgres;
@@ -42,7 +46,7 @@ CREATE OR REPLACE SECRET (
     TYPE postgres,
     HOST '${import.meta.env.VITE_CATALOG_HOST}',
     PORT 5432,
-    DATABASE ${database},
+    DATABASE ${credential.database},
     USER '${credential.postgresUsername}',
     PASSWORD '${credential.postgresPassword}'
 );
@@ -58,8 +62,8 @@ CREATE OR REPLACE SECRET garage_secret (
     USE_SSL false
 );
 
-ATTACH 'ducklake:postgres:dbname=${database}' AS ${import.meta.env.VITE_CATALOG_ALIAS} (
-    DATA_PATH 's3://${bucket}/'
+ATTACH 'ducklake:postgres:dbname=${credential.database}' AS ${import.meta.env.VITE_CATALOG_ALIAS} (
+    DATA_PATH 's3://${credential.bucket}/'
 );
 
 USE ${import.meta.env.VITE_CATALOG_ALIAS};`;

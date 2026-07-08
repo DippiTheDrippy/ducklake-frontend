@@ -81,10 +81,6 @@ export const getComponents = (
 
           "&:hover": {
             boxShadow: "none",
-
-            ...(isDark && {
-              backgroundColor: "#82BFE0",
-            }),
           },
         },
       },

@@ -155,7 +155,7 @@ export default function CredentialCard({
 
         <Button
           component={RouterLink}
-          to={`/dataset/${credential.datasetId}`}
+          to={`/datasets/${credential.datasetId}`}
           variant="outlined"
           size="small"
           endIcon={<ArrowForwardOutlined />}

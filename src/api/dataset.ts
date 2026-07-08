@@ -147,7 +147,9 @@ export async function listCredentials(
   return data as Pagination<Credential>;
 }
 
-export async function getDatasetCredential(datasetId: string) {
+export async function getDatasetCredential(
+  datasetId: string,
+): Promise<Credential> {
   const { data, error } = await api.GET("/api/datasets/{id}/credentials", {
     params: {
       path: {
@@ -156,12 +158,12 @@ export async function getDatasetCredential(datasetId: string) {
     },
   });
 
-  if (!data || error) {
+  if (error) {
     console.error("API error:", error);
     throw error;
   }
 
-  return data;
+  return data as Credential;
 }
 
 export async function createDatasetCredential(

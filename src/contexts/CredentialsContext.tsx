@@ -9,6 +9,7 @@ import {
 import {
   createDatasetCredential,
   deleteCredential,
+  getDatasetCredential,
   listCredentials,
   rotateDatasetCredential,
 } from "../api/dataset";
@@ -23,6 +24,7 @@ interface CredentialsContextType {
   loading: boolean;
   isFetchingMore: boolean;
   credential: Credential | null;
+  getCredential: (id: string) => Promise<void>;
   resetCredential: () => void;
   fetchCredentials: () => Promise<void>;
   fetchMore: () => Promise<void>;
@@ -80,8 +82,38 @@ export const CredentialsProvider = ({
   }
 
   const resetCredential = useCallback(() => {
-    setCredential(null);
+    setCredential((prev) => {
+      if (prev === null) return prev;
+      const { bucket, database, ...credentialWithoutBucketAndDataset } = prev;
+
+      return credentialWithoutBucketAndDataset;
+    });
   }, []);
+
+  const fetchCredential = useCallback(
+    async (datasetId: string) => {
+      if (loadingRef.current) return;
+      setCredential(null);
+
+      try {
+        loadingRef.current = true;
+        setLoading(true);
+
+        const resp: Credential = await getDatasetCredential(datasetId);
+
+        setCredential(resp);
+      } catch (err) {
+        console.error("fetchCredential:", err);
+        notification.error(
+          "Failed to fetch credentials. Please try again later.",
+        );
+      } finally {
+        loadingRef.current = false;
+        setLoading(false);
+      }
+    },
+    [pageSize, notification],
+  );
 
   const fetchCredentials = useCallback(async () => {
     if (loadingRef.current) return;
@@ -163,12 +195,13 @@ export const CredentialsProvider = ({
         );
         setCredential(credential);
         setCredentials((prev) => {
-          const { bucket, dataset, ...credentialWithoutBucketAndDataset } =
+          const { bucket, database, ...credentialWithoutBucketAndDataset } =
             credential;
 
           return [...prev, credentialWithoutBucketAndDataset];
         });
       } catch (err) {
+        setCredential(null);
         console.error("createCredentials: " + err);
         notification.error(
           "Failed to create credentials: " +
@@ -200,6 +233,7 @@ export const CredentialsProvider = ({
           ),
         );
       } catch (err) {
+        setCredential(null);
         console.error("rotateCredentials: " + err);
         notification.error(
           "Failed to rotate credentials: " +
@@ -248,6 +282,7 @@ export const CredentialsProvider = ({
       loading,
       isFetchingMore,
       credential,
+      getCredential: fetchCredential,
       resetCredential,
       fetchCredentials,
       fetchMore,
@@ -261,6 +296,7 @@ export const CredentialsProvider = ({
       loading,
       isFetchingMore,
       credential,
+      fetchCredential,
       resetCredential,
       fetchCredentials,
       fetchMore,

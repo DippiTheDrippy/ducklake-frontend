@@ -19,7 +19,7 @@ export default function Credentials() {
     if (!isAuthenticated) return;
 
     fetchCredentials();
-  }, [fetchCredentials]);
+  }, [isAuthReady, isAuthenticated, fetchCredentials]);
 
   const handleConfirmDelete = async () => {
     if (!selectedCredentialId) return;
